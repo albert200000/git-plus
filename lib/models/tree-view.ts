@@ -122,7 +122,11 @@ export async function diff(treeView: Services.TreeView, all = false) {
     return atom.notifications.addInfo(`\`${repo.relativize(path)}\` has no changes to diff`);
   }
 
-  all ? GitDiffAll(repo.repo) : GitDiff(repo.repo, { file: repo.relativize(path) });
+  if (all) {
+    GitDiffAll(repo.repo)
+  } else {
+    GitDiff(repo.repo, { file: repo.relativize(path) })
+  }
 }
 
 export async function pull(treeView: Services.TreeView) {

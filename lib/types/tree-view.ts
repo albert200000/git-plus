@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 declare namespace Services {
   export interface TreeView {
     selectedPaths(): string[];

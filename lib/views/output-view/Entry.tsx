@@ -26,7 +26,7 @@ export class Entry extends React.Component<Props, State> {
     };
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(prevProps: Props) {
     if (!this.props.isLatest && prevProps.isLatest && !this.userToggled) {
       this.setState({ collapsed: true });
     }

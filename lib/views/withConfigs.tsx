@@ -27,13 +27,13 @@ class ConfigProvider extends React.Component<Props, {}> {
   disposable?: Disposable;
 
   componentDidMount() {
-    this.disposable = atom.config.onDidChange(CONFIG_KEY, event => {
+    this.disposable = atom.config.onDidChange(CONFIG_KEY, _ => {
       this.setState(getConfigs());
     });
   }
 
   componentWillUnmount() {
-    this.disposable && this.disposable.dispose();
+    this.disposable?.dispose();
   }
 
   render() {

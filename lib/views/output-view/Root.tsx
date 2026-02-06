@@ -1,7 +1,5 @@
 import * as AnsiToHtml from "ansi-to-html";
 import { CommandEvent, CompositeDisposable } from "atom";
-import cx from "classnames";
-import * as linkify from "linkify-urls";
 import * as React from "react";
 import ActivityLogger from "../../activity-logger";
 import { Record } from "../../activity-logger";

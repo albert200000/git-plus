@@ -1,16 +1,16 @@
 var $dp3SY$atom = require("atom");
 var $dp3SY$fs = require("fs");
 var $dp3SY$path = require("path");
+var $dp3SY$os = require("os");
+var $dp3SY$atomspacepenviews = require("atom-space-pen-views");
+var $dp3SY$atomnotify = require("atom-notify");
 var $dp3SY$react = require("react");
 var $dp3SY$reactdom = require("react-dom");
 var $dp3SY$ansitohtml = require("ansi-to-html");
 var $dp3SY$classnames = require("classnames");
 var $dp3SY$linkifyurls = require("linkify-urls");
-var $dp3SY$os = require("os");
-var $dp3SY$atomspacepenviews = require("atom-space-pen-views");
-var $dp3SY$atomnotify = require("atom-notify");
-var $dp3SY$fuzzaldrin = require("fuzzaldrin");
 var $dp3SY$fsplus = require("fs-plus");
+var $dp3SY$fuzzaldrin = require("fuzzaldrin");
 var $dp3SY$nodeemoji = require("node-emoji");
 var $dp3SY$underscoreplus = require("underscore-plus");
 
@@ -209,8 +209,9 @@ class $ba3ac58dfc20d764$var$RepoListView {
         this.list.focus();
         this.isAttached = true;
         this.disposables.add(new (0, $dp3SY$atom.Disposable)(()=>{
+            var _a;
             this.panel.destroy();
-            this.previouslyFocusedElement && this.previouslyFocusedElement.focus();
+            (_a = this.previouslyFocusedElement) === null || _a === void 0 || _a.focus();
         }));
     }
 }
@@ -219,291 +220,6 @@ var $ba3ac58dfc20d764$export$2e2bcd8739ae039 = async (repos)=>{
 };
 
 });
-
-
-parcelRegister("9JoOT", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $715b91bc3bca4e15$export$2e2bcd8739ae039);
-
-
-var $8Ozu2 = parcelRequire("8Ozu2");
-
-var $9e2wo = parcelRequire("9e2wo");
-// taken from: https://gist.github.com/jed/982883
-const $715b91bc3bca4e15$var$makeId = (a)=>a ? (a ^ Math.random() * 16 >> a / 4).toString(16) : "10000000-1000-4000-8000-100000000000".replace(/[018]/g, $715b91bc3bca4e15$var$makeId);
-class $715b91bc3bca4e15$var$ActivityLogger {
-    constructor(){
-        this.listeners = new Set();
-        this._records = [];
-    }
-    get records() {
-        return this._records;
-    }
-    record(attributes) {
-        const record = {
-            ...attributes,
-            id: $715b91bc3bca4e15$var$makeId()
-        };
-        if (record.failed && !atom.config.get("pulsar-git-plus.general.alwaysOpenDockWithResult") && !(0, $8Ozu2.viewController).isVisible((0, $9e2wo.OutputViewContainer).URI)) atom.notifications.addError(`Unable to complete command: ${record.message}`, {
-            detail: record.output,
-            buttons: [
-                {
-                    text: "Open Output View",
-                    onDidClick: ()=>{
-                        atom.commands.dispatch(document.querySelector("atom-workspace"), "pulsar-git-plus:toggle-output-view");
-                    }
-                }
-            ]
-        });
-        this._records.push(record);
-        window.requestIdleCallback(()=>{
-            this.listeners.forEach((listener)=>listener(record));
-            if (atom.config.get("pulsar-git-plus.general.alwaysOpenDockWithResult")) (0, $8Ozu2.viewController).getOutputView().show();
-        });
-    }
-    onDidRecordActivity(callback) {
-        this.listeners.add(callback);
-        return new (0, $dp3SY$atom.Disposable)(()=>this.listeners.delete(callback));
-    }
-}
-const $715b91bc3bca4e15$var$logger = new $715b91bc3bca4e15$var$ActivityLogger();
-var $715b91bc3bca4e15$export$2e2bcd8739ae039 = $715b91bc3bca4e15$var$logger;
-
-});
-parcelRegister("8Ozu2", function(module, exports) {
-
-$parcel$export(module.exports, "viewController", () => $66ae84852bce7e4b$export$16b9a1e7104c8845);
-
-var $9e2wo = parcelRequire("9e2wo");
-function $66ae84852bce7e4b$var$isDock(container) {
-    return container.getLocation() !== "center";
-}
-class $66ae84852bce7e4b$var$ViewController {
-    constructor(){
-        atom.workspace.addOpener((uri)=>{
-            if (uri === (0, $9e2wo.OutputViewContainer).URI) return this.getOutputView();
-        });
-    }
-    getOutputView() {
-        if (!this.outputView) {
-            this.outputView = new (0, $9e2wo.OutputViewContainer)();
-            this.outputView.onDidDestroy(()=>{
-                this.outputView = undefined;
-            });
-        }
-        return this.outputView;
-    }
-    isVisible(uri) {
-        const container = atom.workspace.paneContainerForURI(uri);
-        if (container) {
-            const activeItem = container.getActivePaneItem();
-            if (!activeItem) return false;
-            const viewIsActive = activeItem.getURI && activeItem.getURI() === uri;
-            if ($66ae84852bce7e4b$var$isDock(container)) return container.isVisible() && viewIsActive;
-            return viewIsActive;
-        }
-        return false;
-    }
-}
-const $66ae84852bce7e4b$export$16b9a1e7104c8845 = new $66ae84852bce7e4b$var$ViewController();
-
-});
-parcelRegister("9e2wo", function(module, exports) {
-
-$parcel$export(module.exports, "OutputViewContainer", () => $6b7760993bd97cfe$export$e5bb394b6678685e);
-
-
-
-
-var $acbSv = parcelRequire("acbSv");
-class $6b7760993bd97cfe$export$e5bb394b6678685e {
-    constructor(){
-        this.emitter = new (0, $dp3SY$atom.Emitter)();
-        this.element = document.createElement("div");
-        this.element.classList.add("pulsar-git-plus", "output");
-        this.render();
-        atom.workspace.open(this, {
-            activatePane: false
-        });
-    }
-    getURI() {
-        return $6b7760993bd97cfe$export$e5bb394b6678685e.URI;
-    }
-    getTitle() {
-        return "Git+";
-    }
-    getDefaultLocation() {
-        return "bottom";
-    }
-    serialize() {
-        return {
-            deserializer: "pulsar-git-plus/output-view"
-        };
-    }
-    async show() {
-        const focusedPane = atom.workspace.getActivePane();
-        await atom.workspace.open(this, {
-            activatePane: true
-        });
-        if (focusedPane && !focusedPane.isDestroyed()) focusedPane.activate();
-    }
-    hide() {
-        atom.workspace.hide(this);
-    }
-    render() {
-        $dp3SY$reactdom.render(/*#__PURE__*/ $dp3SY$react.createElement((0, $acbSv.Root), null), this.element);
-    }
-    toggle() {
-        atom.workspace.toggle(this);
-    }
-    destroy() {
-        $dp3SY$reactdom.unmountComponentAtNode(this.element);
-        this.element.remove();
-        this.emitter.emit("did-destroy");
-    }
-    onDidDestroy(cb) {
-        return this.emitter.on("did-destroy", cb);
-    }
-}
-$6b7760993bd97cfe$export$e5bb394b6678685e.URI = "pulsar-git-plus://output-view";
-
-});
-parcelRegister("acbSv", function(module, exports) {
-
-$parcel$export(module.exports, "Root", () => $76c43d1d1ca35db0$export$be92b6f5f03c0fe9);
-
-
-
-
-var $9JoOT = parcelRequire("9JoOT");
-
-var $eNeDK = parcelRequire("eNeDK");
-function $76c43d1d1ca35db0$var$reverseMap(array, fn) {
-    const result = [];
-    for(let i = array.length - 1; i > -1; i--)result.push(fn(array[i], i));
-    return result;
-}
-class $76c43d1d1ca35db0$export$be92b6f5f03c0fe9 extends $dp3SY$react.Component {
-    constructor(){
-        super(...arguments);
-        this.state = {
-            latestId: null,
-            records: [
-                ...(0, $9JoOT.default).records
-            ]
-        };
-        this.subscriptions = new (0, $dp3SY$atom.CompositeDisposable)();
-        this.$root = /*#__PURE__*/ $dp3SY$react.createRef();
-        this.ansiConverter = new $dp3SY$ansitohtml();
-    }
-    componentDidMount() {
-        this.subscriptions.add((0, $9JoOT.default).onDidRecordActivity((record)=>{
-            this.setState((state)=>({
-                    latestId: record.id,
-                    records: [
-                        ...state.records,
-                        record
-                    ]
-                }));
-        }), atom.commands.add("atom-workspace", "pulsar-git-plus:copy", {
-            hiddenInCommandPalette: true,
-            didDispatch: (event)=>{
-                if (event.target && event.target.contains(document.querySelector(".pulsar-git-plus.output"))) atom.clipboard.write(window.getSelection().toString());
-                else event.abortKeyBinding();
-            }
-        }));
-        atom.keymaps.add("pulsar-git-plus", {
-            ".platform-darwin atom-workspace": {
-                "cmd-c": "pulsar-git-plus:copy"
-            },
-            ".platform-win32 atom-workspace, .platform-linux atom-workspace": {
-                "ctrl-c": "pulsar-git-plus:copy"
-            }
-        });
-    }
-    componentDidUpdate(previousProps, previousState) {
-        if (previousState.records.length < this.state.records.length) {
-            if (this.$root.current) this.$root.current.scrollTop = 0;
-        }
-    }
-    componentWillUnmount() {
-        this.subscriptions.dispose();
-        atom.keymaps["removeBindingsFromSource"]("pulsar-git-plus");
-    }
-    render() {
-        return /*#__PURE__*/ $dp3SY$react.createElement("div", {
-            id: "root",
-            ref: this.$root
-        }, $76c43d1d1ca35db0$var$reverseMap(this.state.records, (record)=>/*#__PURE__*/ $dp3SY$react.createElement((0, $eNeDK.Entry), {
-                isLatest: this.state.latestId === record.id,
-                key: record.id,
-                record: record,
-                ansiConverter: this.ansiConverter
-            })));
-    }
-}
-
-});
-parcelRegister("eNeDK", function(module, exports) {
-
-$parcel$export(module.exports, "Entry", () => $ac50ff80264ebb0b$export$3bb977b3ba9d3b59);
-
-
-
-class $ac50ff80264ebb0b$export$3bb977b3ba9d3b59 extends $dp3SY$react.Component {
-    constructor(props){
-        super(props);
-        this.userToggled = false;
-        this.handleClickToggle = (event)=>{
-            event.stopPropagation();
-            this.userToggled = true;
-            this.setState({
-                collapsed: !this.state.collapsed
-            });
-        };
-        this.state = {
-            collapsed: atom.config.get("pulsar-git-plus.general.alwaysOpenDockWithResult") && props.isLatest ? false : true
-        };
-    }
-    componentDidUpdate(prevProps, prevState) {
-        if (!this.props.isLatest && prevProps.isLatest && !this.userToggled) this.setState({
-            collapsed: true
-        });
-    }
-    render() {
-        const { failed: failed, message: message, output: output, repoName: repoName } = this.props.record;
-        const hasOutput = output !== "";
-        return /*#__PURE__*/ $dp3SY$react.createElement("div", {
-            className: (0, ($parcel$interopDefault($dp3SY$classnames)))("record", {
-                "has-output": hasOutput
-            })
-        }, /*#__PURE__*/ $dp3SY$react.createElement("div", {
-            className: "line",
-            onClick: this.handleClickToggle
-        }, /*#__PURE__*/ $dp3SY$react.createElement("div", {
-            className: "gutter"
-        }, hasOutput && /*#__PURE__*/ $dp3SY$react.createElement("span", {
-            className: "icon icon-ellipsis"
-        })), /*#__PURE__*/ $dp3SY$react.createElement("div", {
-            className: (0, ($parcel$interopDefault($dp3SY$classnames)))("message", {
-                "text-error": failed
-            })
-        }, "[", repoName, "] ", message)), hasOutput && /*#__PURE__*/ $dp3SY$react.createElement("div", {
-            className: (0, ($parcel$interopDefault($dp3SY$classnames)))("output", {
-                collapsed: this.state.collapsed
-            })
-        }, /*#__PURE__*/ $dp3SY$react.createElement("pre", {
-            dangerouslySetInnerHTML: {
-                __html: $dp3SY$linkifyurls(this.props.ansiConverter.toHtml(output))
-            }
-        })));
-    }
-}
-
-});
-
-
-
 
 
 parcelRegister("lppKC", function(module, exports) {
@@ -1090,6 +806,291 @@ class $acf5d328ebda8ac8$export$2e2bcd8739ae039 {
 
 });
 
+parcelRegister("9JoOT", function(module, exports) {
+
+$parcel$export(module.exports, "default", () => $715b91bc3bca4e15$export$2e2bcd8739ae039);
+
+
+var $8Ozu2 = parcelRequire("8Ozu2");
+
+var $9e2wo = parcelRequire("9e2wo");
+// taken from: https://gist.github.com/jed/982883
+const $715b91bc3bca4e15$var$makeId = (a)=>a ? (a ^ Math.random() * 16 >> a / 4).toString(16) : "10000000-1000-4000-8000-100000000000".replace(/[018]/g, $715b91bc3bca4e15$var$makeId);
+class $715b91bc3bca4e15$var$ActivityLogger {
+    constructor(){
+        this.listeners = new Set();
+        this._records = [];
+    }
+    get records() {
+        return this._records;
+    }
+    record(attributes) {
+        const record = {
+            ...attributes,
+            id: $715b91bc3bca4e15$var$makeId()
+        };
+        if (record.failed && !atom.config.get("pulsar-git-plus.general.alwaysOpenDockWithResult") && !(0, $8Ozu2.viewController).isVisible((0, $9e2wo.OutputViewContainer).URI)) atom.notifications.addError(`Unable to complete command: ${record.message}`, {
+            detail: record.output,
+            buttons: [
+                {
+                    text: "Open Output View",
+                    onDidClick: ()=>{
+                        atom.commands.dispatch(document.querySelector("atom-workspace"), "pulsar-git-plus:toggle-output-view");
+                    }
+                }
+            ]
+        });
+        this._records.push(record);
+        window.requestIdleCallback(()=>{
+            this.listeners.forEach((listener)=>listener(record));
+            if (atom.config.get("pulsar-git-plus.general.alwaysOpenDockWithResult")) (0, $8Ozu2.viewController).getOutputView().show();
+        });
+    }
+    onDidRecordActivity(callback) {
+        this.listeners.add(callback);
+        return new (0, $dp3SY$atom.Disposable)(()=>this.listeners.delete(callback));
+    }
+}
+const $715b91bc3bca4e15$var$logger = new $715b91bc3bca4e15$var$ActivityLogger();
+var $715b91bc3bca4e15$export$2e2bcd8739ae039 = $715b91bc3bca4e15$var$logger;
+
+});
+parcelRegister("8Ozu2", function(module, exports) {
+
+$parcel$export(module.exports, "viewController", () => $66ae84852bce7e4b$export$16b9a1e7104c8845);
+
+var $9e2wo = parcelRequire("9e2wo");
+function $66ae84852bce7e4b$var$isDock(container) {
+    return container.getLocation() !== "center";
+}
+class $66ae84852bce7e4b$var$ViewController {
+    constructor(){
+        atom.workspace.addOpener((uri)=>{
+            if (uri === (0, $9e2wo.OutputViewContainer).URI) return this.getOutputView();
+        });
+    }
+    getOutputView() {
+        if (!this.outputView) {
+            this.outputView = new (0, $9e2wo.OutputViewContainer)();
+            this.outputView.onDidDestroy(()=>{
+                this.outputView = undefined;
+            });
+        }
+        return this.outputView;
+    }
+    isVisible(uri) {
+        const container = atom.workspace.paneContainerForURI(uri);
+        if (container) {
+            const activeItem = container.getActivePaneItem();
+            if (!activeItem) return false;
+            const viewIsActive = activeItem.getURI && activeItem.getURI() === uri;
+            if ($66ae84852bce7e4b$var$isDock(container)) return container.isVisible() && viewIsActive;
+            return viewIsActive;
+        }
+        return false;
+    }
+}
+const $66ae84852bce7e4b$export$16b9a1e7104c8845 = new $66ae84852bce7e4b$var$ViewController();
+
+});
+parcelRegister("9e2wo", function(module, exports) {
+
+$parcel$export(module.exports, "OutputViewContainer", () => $6b7760993bd97cfe$export$e5bb394b6678685e);
+
+
+
+
+var $acbSv = parcelRequire("acbSv");
+class $6b7760993bd97cfe$export$e5bb394b6678685e {
+    constructor(){
+        this.emitter = new (0, $dp3SY$atom.Emitter)();
+        this.element = document.createElement("div");
+        this.element.classList.add("pulsar-git-plus", "output");
+        this.render();
+        atom.workspace.open(this, {
+            activatePane: false
+        });
+    }
+    getURI() {
+        return $6b7760993bd97cfe$export$e5bb394b6678685e.URI;
+    }
+    getTitle() {
+        return "Git+";
+    }
+    getDefaultLocation() {
+        return "bottom";
+    }
+    serialize() {
+        return {
+            deserializer: "pulsar-git-plus/output-view"
+        };
+    }
+    async show() {
+        const focusedPane = atom.workspace.getActivePane();
+        await atom.workspace.open(this, {
+            activatePane: true
+        });
+        if (focusedPane && !focusedPane.isDestroyed()) focusedPane.activate();
+    }
+    hide() {
+        atom.workspace.hide(this);
+    }
+    render() {
+        $dp3SY$reactdom.render(/*#__PURE__*/ $dp3SY$react.createElement((0, $acbSv.Root), null), this.element);
+    }
+    toggle() {
+        atom.workspace.toggle(this);
+    }
+    destroy() {
+        $dp3SY$reactdom.unmountComponentAtNode(this.element);
+        this.element.remove();
+        this.emitter.emit("did-destroy");
+    }
+    onDidDestroy(cb) {
+        return this.emitter.on("did-destroy", cb);
+    }
+}
+$6b7760993bd97cfe$export$e5bb394b6678685e.URI = "pulsar-git-plus://output-view";
+
+});
+parcelRegister("acbSv", function(module, exports) {
+
+$parcel$export(module.exports, "Root", () => $76c43d1d1ca35db0$export$be92b6f5f03c0fe9);
+
+
+
+
+var $9JoOT = parcelRequire("9JoOT");
+
+var $eNeDK = parcelRequire("eNeDK");
+function $76c43d1d1ca35db0$var$reverseMap(array, fn) {
+    const result = [];
+    for(let i = array.length - 1; i > -1; i--)result.push(fn(array[i], i));
+    return result;
+}
+class $76c43d1d1ca35db0$export$be92b6f5f03c0fe9 extends $dp3SY$react.Component {
+    constructor(){
+        super(...arguments);
+        this.state = {
+            latestId: null,
+            records: [
+                ...(0, $9JoOT.default).records
+            ]
+        };
+        this.subscriptions = new (0, $dp3SY$atom.CompositeDisposable)();
+        this.$root = /*#__PURE__*/ $dp3SY$react.createRef();
+        this.ansiConverter = new $dp3SY$ansitohtml();
+    }
+    componentDidMount() {
+        this.subscriptions.add((0, $9JoOT.default).onDidRecordActivity((record)=>{
+            this.setState((state)=>({
+                    latestId: record.id,
+                    records: [
+                        ...state.records,
+                        record
+                    ]
+                }));
+        }), atom.commands.add("atom-workspace", "pulsar-git-plus:copy", {
+            hiddenInCommandPalette: true,
+            didDispatch: (event)=>{
+                if (event.target && event.target.contains(document.querySelector(".pulsar-git-plus.output"))) atom.clipboard.write(window.getSelection().toString());
+                else event.abortKeyBinding();
+            }
+        }));
+        atom.keymaps.add("pulsar-git-plus", {
+            ".platform-darwin atom-workspace": {
+                "cmd-c": "pulsar-git-plus:copy"
+            },
+            ".platform-win32 atom-workspace, .platform-linux atom-workspace": {
+                "ctrl-c": "pulsar-git-plus:copy"
+            }
+        });
+    }
+    componentDidUpdate(previousProps, previousState) {
+        if (previousState.records.length < this.state.records.length) {
+            if (this.$root.current) this.$root.current.scrollTop = 0;
+        }
+    }
+    componentWillUnmount() {
+        this.subscriptions.dispose();
+        atom.keymaps["removeBindingsFromSource"]("pulsar-git-plus");
+    }
+    render() {
+        return /*#__PURE__*/ $dp3SY$react.createElement("div", {
+            id: "root",
+            ref: this.$root
+        }, $76c43d1d1ca35db0$var$reverseMap(this.state.records, (record)=>/*#__PURE__*/ $dp3SY$react.createElement((0, $eNeDK.Entry), {
+                isLatest: this.state.latestId === record.id,
+                key: record.id,
+                record: record,
+                ansiConverter: this.ansiConverter
+            })));
+    }
+}
+
+});
+parcelRegister("eNeDK", function(module, exports) {
+
+$parcel$export(module.exports, "Entry", () => $ac50ff80264ebb0b$export$3bb977b3ba9d3b59);
+
+
+
+class $ac50ff80264ebb0b$export$3bb977b3ba9d3b59 extends $dp3SY$react.Component {
+    constructor(props){
+        super(props);
+        this.userToggled = false;
+        this.handleClickToggle = (event)=>{
+            event.stopPropagation();
+            this.userToggled = true;
+            this.setState({
+                collapsed: !this.state.collapsed
+            });
+        };
+        this.state = {
+            collapsed: atom.config.get("pulsar-git-plus.general.alwaysOpenDockWithResult") && props.isLatest ? false : true
+        };
+    }
+    componentDidUpdate(prevProps) {
+        if (!this.props.isLatest && prevProps.isLatest && !this.userToggled) this.setState({
+            collapsed: true
+        });
+    }
+    render() {
+        const { failed: failed, message: message, output: output, repoName: repoName } = this.props.record;
+        const hasOutput = output !== "";
+        return /*#__PURE__*/ $dp3SY$react.createElement("div", {
+            className: (0, ($parcel$interopDefault($dp3SY$classnames)))("record", {
+                "has-output": hasOutput
+            })
+        }, /*#__PURE__*/ $dp3SY$react.createElement("div", {
+            className: "line",
+            onClick: this.handleClickToggle
+        }, /*#__PURE__*/ $dp3SY$react.createElement("div", {
+            className: "gutter"
+        }, hasOutput && /*#__PURE__*/ $dp3SY$react.createElement("span", {
+            className: "icon icon-ellipsis"
+        })), /*#__PURE__*/ $dp3SY$react.createElement("div", {
+            className: (0, ($parcel$interopDefault($dp3SY$classnames)))("message", {
+                "text-error": failed
+            })
+        }, "[", repoName, "] ", message)), hasOutput && /*#__PURE__*/ $dp3SY$react.createElement("div", {
+            className: (0, ($parcel$interopDefault($dp3SY$classnames)))("output", {
+                collapsed: this.state.collapsed
+            })
+        }, /*#__PURE__*/ $dp3SY$react.createElement("pre", {
+            dangerouslySetInnerHTML: {
+                __html: $dp3SY$linkifyurls(this.props.ansiConverter.toHtml(output))
+            }
+        })));
+    }
+}
+
+});
+
+
+
+
+
 
 parcelRegister("crkkW", function(module, exports) {
 
@@ -1203,6 +1204,552 @@ parcelRegister("ceh8S", function(module, exports) {
 });
 
 
+parcelRegister("hH1op", function(module, exports) {
+
+$parcel$export(module.exports, "default", () => $ce178863e42faca6$export$2e2bcd8739ae039);
+
+var $9JoOT = parcelRequire("9JoOT");
+
+var $eQF7Z = parcelRequire("eQF7Z");
+const $ce178863e42faca6$var$getCurrentFileInRepo = (repo)=>{
+    const activeEditor = atom.workspace.getActiveTextEditor();
+    const path = activeEditor && activeEditor.getPath();
+    if (!path) return null;
+    return repo.relativize(path);
+};
+var $ce178863e42faca6$export$2e2bcd8739ae039 = async (stageEverything = false)=>{
+    const repo = await (0, $eQF7Z.default).getCurrent();
+    if (!repo) return atom.notifications.addInfo("No repository found");
+    const path = stageEverything ? "." : $ce178863e42faca6$var$getCurrentFileInRepo(repo) || ".";
+    const result = await repo.stage([
+        path
+    ]);
+    (0, $9JoOT.default).record({
+        repoName: repo.getName(),
+        message: `add ${path}`,
+        ...result
+    });
+};
+
+});
+
+parcelRegister("j90G6", function(module, exports) {
+
+$parcel$export(module.exports, "default", () => $deff623bfa6a9949$export$2e2bcd8739ae039);
+
+var $9JoOT = parcelRequire("9JoOT");
+
+var $eQF7Z = parcelRequire("eQF7Z");
+var $deff623bfa6a9949$export$2e2bcd8739ae039 = async ()=>{
+    const repo = await (0, $eQF7Z.default).getCurrent();
+    if (!repo) return atom.notifications.addInfo("No repository found");
+    const result = await repo.stage([
+        "."
+    ], {
+        update: true
+    });
+    (0, $9JoOT.default).record({
+        repoName: repo.getName(),
+        message: `add modified files`,
+        ...result
+    });
+};
+
+});
+
+parcelRegister("3iQun", function(module, exports) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(function() {
+    var getCommands, git;
+    git = (parcelRequire("lppKC"));
+    getCommands = function() {
+        var GitCheckoutBranch, GitCheckoutNewBranch, GitCherryPick, GitCommit, GitCommitAmend, GitDeleteBranch, GitDiff, GitDiffAll, GitDiffBranchFiles, GitDiffBranches, GitDifftool, GitInit, GitLog, GitMerge, GitOpenChangedFiles, GitRebase, GitRemove, GitRun, GitShow, GitStageFiles, GitStageHunk, GitStashApply, GitStashDrop, GitStashPop, GitStashSave, GitStashSaveMessage, GitStatus, GitTags, ManageStashes, commands, gitAdd, gitAddModified, gitCheckoutFile, gitFetch, gitFetchInAllRepos, gitPull, gitPush, gitReset;
+        gitAdd = (parcelRequire("hH1op")).default;
+        gitAddModified = (parcelRequire("j90G6")).default;
+        GitCheckoutNewBranch = (parcelRequire("4y5U8"));
+        GitCheckoutBranch = (parcelRequire("2DNX4"));
+        GitDeleteBranch = (parcelRequire("3O1Aw"));
+        gitCheckoutFile = (parcelRequire("dcxBF")).default;
+        GitCherryPick = (parcelRequire("77LDn"));
+        GitCommit = (parcelRequire("3mGsE"));
+        GitCommitAmend = (parcelRequire("bXxVi"));
+        GitDiff = (parcelRequire("7c2RU"));
+        GitDiffBranches = (parcelRequire("3Pi7d"));
+        GitDiffBranchFiles = (parcelRequire("hD9Pz"));
+        GitDifftool = (parcelRequire("ejfzQ"));
+        GitDiffAll = (parcelRequire("ggLle"));
+        gitFetch = (parcelRequire("jd638")).default;
+        gitFetchInAllRepos = (parcelRequire("eaDLy")).default;
+        GitInit = (parcelRequire("lBjNq"));
+        GitLog = (parcelRequire("e4WFK"));
+        gitPull = (parcelRequire("km474")).default;
+        gitPush = (parcelRequire("cMzzd")).default;
+        gitReset = (parcelRequire("3piiI")).default;
+        GitRemove = (parcelRequire("2mdJF"));
+        GitShow = (parcelRequire("271rL"));
+        GitStageFiles = (parcelRequire("4BqoQ"));
+        GitStageHunk = (parcelRequire("lK3FM"));
+        ManageStashes = (parcelRequire("dMIZz"));
+        GitStashApply = (parcelRequire("7OvTn"));
+        GitStashDrop = (parcelRequire("hBbsd"));
+        GitStashPop = (parcelRequire("7xGEe"));
+        GitStashSave = (parcelRequire("cmRNj"));
+        GitStashSaveMessage = (parcelRequire("7TM1C"));
+        GitStatus = (parcelRequire("9xGRG"));
+        GitTags = (parcelRequire("8niyI"));
+        GitRun = (parcelRequire("ceh8S"));
+        GitMerge = (parcelRequire("d1WP8"));
+        GitRebase = (parcelRequire("l0YAk"));
+        GitOpenChangedFiles = (parcelRequire("7u2hg"));
+        commands = [];
+        return git.getRepo().then(function(repo) {
+            var currentFile, ref;
+            currentFile = repo.relativize((ref = atom.workspace.getActiveTextEditor()) != null ? ref.getPath() : void 0);
+            git.refresh(repo);
+            if (atom.config.get('pulsar-git-plus.experimental.customCommands')) commands = commands.concat((parcelRequire("crkkW")).getCustomCommands());
+            commands.push([
+                'pulsar-git-plus:add',
+                'Add',
+                gitAdd
+            ]);
+            commands.push([
+                'pulsar-git-plus:add-modified',
+                'Add Modified',
+                gitAddModified
+            ]);
+            commands.push([
+                'pulsar-git-plus:add-all',
+                'Add All',
+                function() {
+                    return gitAdd(true);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:log',
+                'Log',
+                function() {
+                    return GitLog(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:log-current-file',
+                'Log Current File',
+                function() {
+                    return GitLog(repo, {
+                        onlyCurrentFile: true
+                    });
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:remove-current-file',
+                'Remove Current File',
+                function() {
+                    return GitRemove(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:checkout-all-files',
+                'Checkout All Files',
+                function() {
+                    return gitCheckoutFile(true);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:checkout-current-file',
+                'Checkout Current File',
+                function() {
+                    return gitCheckoutFile();
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:commit',
+                'Commit',
+                function() {
+                    return GitCommit(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:commit-all',
+                'Commit All',
+                function() {
+                    return GitCommit(repo, {
+                        stageChanges: true
+                    });
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:commit-amend',
+                'Commit Amend',
+                function() {
+                    return GitCommitAmend(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:add-and-commit',
+                'Add And Commit',
+                function() {
+                    return git.add(repo, {
+                        file: currentFile
+                    }).then(function() {
+                        return GitCommit(repo);
+                    });
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:add-and-commit-and-push',
+                'Add And Commit And Push',
+                function() {
+                    return git.add(repo, {
+                        file: currentFile
+                    }).then(function() {
+                        return GitCommit(repo, {
+                            andPush: true
+                        });
+                    });
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:add-all-and-commit',
+                'Add All And Commit',
+                function() {
+                    return git.add(repo).then(function() {
+                        return GitCommit(repo);
+                    });
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:add-all-commit-and-push',
+                'Add All, Commit And Push',
+                function() {
+                    return git.add(repo).then(function() {
+                        return GitCommit(repo, {
+                            andPush: true
+                        });
+                    });
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:commit-all-and-push',
+                'Commit All And Push',
+                function() {
+                    return GitCommit(repo, {
+                        stageChanges: true,
+                        andPush: true
+                    });
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:checkout',
+                'Checkout',
+                function() {
+                    return GitCheckoutBranch(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:checkout-remote',
+                'Checkout Remote',
+                function() {
+                    return GitCheckoutBranch(repo, {
+                        remote: true
+                    });
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:new-branch',
+                'Checkout New Branch',
+                function() {
+                    return GitCheckoutNewBranch(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:delete-local-branch',
+                'Delete Local Branch',
+                function() {
+                    return GitDeleteBranch(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:delete-remote-branch',
+                'Delete Remote Branch',
+                function() {
+                    return GitDeleteBranch(repo, {
+                        remote: true
+                    });
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:delete-branch-local-and-remote',
+                'Delete Branch (Local and Remote)',
+                function() {
+                    return GitDeleteBranch(repo).then(function() {
+                        return GitDeleteBranch(repo, {
+                            remote: true
+                        });
+                    });
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:cherry-pick',
+                'Cherry-Pick',
+                function() {
+                    return GitCherryPick(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:diff',
+                'Diff',
+                function() {
+                    return GitDiff(repo, {
+                        file: currentFile
+                    });
+                }
+            ]);
+            if (atom.config.get('pulsar-git-plus.experimental.diffBranches')) {
+                commands.push([
+                    'pulsar-git-plus:diff-branches',
+                    'Diff branches',
+                    function() {
+                        return GitDiffBranches(repo);
+                    }
+                ]);
+                commands.push([
+                    'pulsar-git-plus:diff-branch-files',
+                    'Diff branch files',
+                    function() {
+                        return GitDiffBranchFiles(repo);
+                    }
+                ]);
+            }
+            commands.push([
+                'pulsar-git-plus:difftool',
+                'Difftool',
+                function() {
+                    return GitDifftool(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:diff-all',
+                'Diff All',
+                function() {
+                    return GitDiffAll(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:fetch',
+                'Fetch',
+                gitFetch
+            ]);
+            commands.push([
+                'pulsar-git-plus:fetch-all',
+                'Fetch All (Repos & Remotes)',
+                gitFetchInAllRepos
+            ]);
+            commands.push([
+                'pulsar-git-plus:fetch-prune',
+                'Fetch Prune',
+                function() {
+                    return gitFetch({
+                        prune: true
+                    });
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:pull',
+                'Pull',
+                gitPull
+            ]);
+            commands.push([
+                'pulsar-git-plus:push',
+                'Push',
+                gitPush
+            ]);
+            commands.push([
+                'pulsar-git-plus:push-set-upstream',
+                'Push -u',
+                function() {
+                    return gitPush(true);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:remove',
+                'Remove',
+                function() {
+                    return GitRemove(repo, {
+                        showSelector: true
+                    });
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:reset',
+                'Reset HEAD',
+                gitReset
+            ]);
+            commands.push([
+                'pulsar-git-plus:show',
+                'Show',
+                function() {
+                    return GitShow(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:stage-files',
+                'Stage Files',
+                function() {
+                    return GitStageFiles(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:stage-hunk',
+                'Stage Hunk',
+                function() {
+                    return GitStageHunk(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:manage-stashes',
+                'Manage Stashes',
+                ManageStashes.default
+            ]);
+            commands.push([
+                'pulsar-git-plus:stash-save',
+                'Stash: Save Changes',
+                function() {
+                    return GitStashSave(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:stash-save-message',
+                'Stash: Save Changes With Message',
+                function() {
+                    return GitStashSaveMessage(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:stash-pop',
+                'Stash: Apply (Pop)',
+                function() {
+                    return GitStashPop(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:stash-apply',
+                'Stash: Apply (Keep)',
+                function() {
+                    return GitStashApply(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:stash-delete',
+                'Stash: Delete (Drop)',
+                function() {
+                    return GitStashDrop(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:status',
+                'Status',
+                function() {
+                    return GitStatus(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:tags',
+                'Tags',
+                function() {
+                    return GitTags(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:run',
+                'Run',
+                function() {
+                    return new GitRun(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:merge',
+                'Merge',
+                function() {
+                    return GitMerge(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:merge-remote',
+                'Merge Remote',
+                function() {
+                    return GitMerge(repo, {
+                        remote: true
+                    });
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:merge-no-fast-forward',
+                'Merge without fast-forward',
+                function() {
+                    return GitMerge(repo, {
+                        noFastForward: true
+                    });
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:rebase',
+                'Rebase',
+                function() {
+                    return GitRebase(repo);
+                }
+            ]);
+            commands.push([
+                'pulsar-git-plus:git-open-changed-files',
+                'Open Changed Files',
+                function() {
+                    return GitOpenChangedFiles(repo);
+                }
+            ]);
+            return commands;
+        });
+    };
+    module.exports = getCommands;
+}).call(module.exports);
+
+});
 parcelRegister("4y5U8", function(module, exports) {
 
 
@@ -1287,6 +1834,260 @@ parcelRegister("4y5U8", function(module, exports) {
         return new InputView(repo);
     };
 }).call(module.exports);
+
+});
+
+parcelRegister("2DNX4", function(module, exports) {
+
+
+var $lppKC = parcelRequire("lppKC");
+var $1ec5f8a8f0740fa9$require$git = $lppKC.default;
+
+var $gSFWX = parcelRequire("gSFWX");
+
+var $9JoOT = parcelRequire("9JoOT");
+var $1ec5f8a8f0740fa9$require$ActivityLogger = $9JoOT.default;
+
+var $eQF7Z = parcelRequire("eQF7Z");
+var $1ec5f8a8f0740fa9$require$Repository = $eQF7Z.default;
+
+var $baLSq = parcelRequire("baLSq");
+module.exports = (repo, options = {
+    remote: false
+})=>{
+    const args = options.remote ? [
+        'branch',
+        '-r',
+        '--no-color'
+    ] : [
+        'branch',
+        '--no-color'
+    ];
+    return $1ec5f8a8f0740fa9$require$git.cmd(args, {
+        cwd: repo.getWorkingDirectory()
+    }).then((data)=>{
+        return new $baLSq(data, ({ name: name })=>{
+            const args = options.remote ? [
+                'checkout',
+                name,
+                '--track'
+            ] : [
+                'checkout',
+                name
+            ];
+            const repoName = new $1ec5f8a8f0740fa9$require$Repository(repo).getName();
+            $1ec5f8a8f0740fa9$require$git.cmd(args, {
+                cwd: repo.getWorkingDirectory()
+            }).then((output)=>{
+                $1ec5f8a8f0740fa9$require$ActivityLogger.record({
+                    repoName: repoName,
+                    message: `checkout to ${name}`,
+                    output: output
+                });
+                atom.workspace.getTextEditors().forEach((editor)=>{
+                    try {
+                        const path = editor.getPath();
+                        console.log(`Git-plus: editor.getPath() returned '${path}'`);
+                        if (path && path.toString) $dp3SY$fsplus.exists(path.toString(), (exists)=>{
+                            if (!exists) editor.destroy();
+                        });
+                    } catch (error) {
+                        $gSFWX.addWarning('There was an error closing windows for non-existing files after the checkout. Please check the dev console.');
+                        console.info('Git-plus: please take a screenshot of what has been printed in the console and add it to the issue on github at https://github.com/albert200000/git-plus/issues/139', error);
+                    }
+                });
+                $1ec5f8a8f0740fa9$require$git.refresh(repo);
+            }).catch((error)=>{
+                $1ec5f8a8f0740fa9$require$ActivityLogger.record({
+                    repoName: repoName,
+                    message: `checkout to ${name}`,
+                    output: error,
+                    failed: true
+                });
+            });
+        });
+    });
+};
+
+});
+parcelRegister("baLSq", function(module, exports) {
+
+(function() {
+    var $$, ListView, SelectListView;
+    ({ $$: $$, SelectListView: SelectListView } = $dp3SY$atomspacepenviews);
+    module.exports = ListView = class ListView extends SelectListView {
+        initialize(data, onConfirm) {
+            this.data = data;
+            this.onConfirm = onConfirm;
+            super.initialize();
+            this.addClass('git-branch');
+            this.show();
+            this.parseData();
+            return this.currentPane = atom.workspace.getActivePane();
+        }
+        parseData() {
+            var branches, items;
+            items = this.data.split("\n");
+            branches = [];
+            items.forEach(function(item) {
+                var name;
+                item = item.replace(/\s/g, '');
+                name = item.startsWith("*") ? item.slice(1) : item;
+                if (item !== '') return branches.push({
+                    name: name
+                });
+            });
+            this.setItems(branches);
+            return this.focusFilterEditor();
+        }
+        getFilterKey() {
+            return 'name';
+        }
+        show() {
+            if (this.panel == null) this.panel = atom.workspace.addModalPanel({
+                item: this
+            });
+            this.panel.show();
+            return this.storeFocusedElement();
+        }
+        cancelled() {
+            return this.hide();
+        }
+        hide() {
+            var ref;
+            return (ref = this.panel) != null ? ref.destroy() : void 0;
+        }
+        viewForItem({ name: name }) {
+            var current;
+            current = false;
+            if (name.startsWith("*")) {
+                name = name.slice(1);
+                current = true;
+            }
+            return $$(function() {
+                return this.li(name, ()=>{
+                    return this.div({
+                        class: 'pull-right'
+                    }, ()=>{
+                        if (current) return this.span('HEAD');
+                    });
+                });
+            });
+        }
+        confirmed(item) {
+            var ref;
+            this.onConfirm(item);
+            this.cancel();
+            if ((ref = this.currentPane) != null ? ref.isAlive() : void 0) return this.currentPane.activate();
+        }
+    };
+}).call(module.exports);
+
+});
+
+
+parcelRegister("3O1Aw", function(module, exports) {
+
+var $lppKC = parcelRequire("lppKC");
+var $2c5745f95cc29502$require$git = $lppKC.default;
+
+var $gSFWX = parcelRequire("gSFWX");
+
+var $9JoOT = parcelRequire("9JoOT");
+var $2c5745f95cc29502$require$ActivityLogger = $9JoOT.default;
+
+var $eQF7Z = parcelRequire("eQF7Z");
+var $2c5745f95cc29502$require$Repository = $eQF7Z.default;
+
+var $baLSq = parcelRequire("baLSq");
+module.exports = (repo, options = {
+    remote: false
+})=>{
+    const args = options.remote ? [
+        'branch',
+        '-r',
+        '--no-color'
+    ] : [
+        'branch',
+        '--no-color'
+    ];
+    return $2c5745f95cc29502$require$git.cmd(args, {
+        cwd: repo.getWorkingDirectory()
+    }).then((data)=>{
+        return new $baLSq(data, ({ name: name })=>{
+            let args, notification;
+            if (options.remote) {
+                const remote = name.substring(0, name.indexOf('/'));
+                const branch = name.substring(name.indexOf('/') + 1);
+                notification = $gSFWX.addInfo(`Deleting remote branch ${branch}`, {
+                    dismissable: true
+                });
+                args = [
+                    'push',
+                    remote,
+                    '--delete',
+                    branch
+                ];
+            } else {
+                const branch = name;
+                args = [
+                    'branch',
+                    '-D',
+                    branch
+                ];
+            }
+            const message = `delete ${options.remote ? 'remote ' : ''} branch '${args[args.length - 1]}'`;
+            const repoName = new $2c5745f95cc29502$require$Repository(repo).getName();
+            $2c5745f95cc29502$require$git.cmd(args, {
+                cwd: repo.getWorkingDirectory()
+            }).then((output)=>{
+                notification?.dismiss();
+                $gSFWX.addSuccess(output);
+                $2c5745f95cc29502$require$ActivityLogger.record({
+                    repoName: repoName,
+                    message: message,
+                    output: output
+                });
+            }).catch((error)=>{
+                notification?.dismiss();
+                $gSFWX.addError(error);
+                $2c5745f95cc29502$require$ActivityLogger.record({
+                    repoName: repoName,
+                    message: message,
+                    output: error,
+                    failed: true
+                });
+            });
+        });
+    });
+};
+
+});
+
+parcelRegister("dcxBF", function(module, exports) {
+
+$parcel$export(module.exports, "default", () => $99c676eeff6e9a85$export$2e2bcd8739ae039);
+
+var $9JoOT = parcelRequire("9JoOT");
+
+var $eQF7Z = parcelRequire("eQF7Z");
+const $99c676eeff6e9a85$var$getCurrentFileInRepo = (repo)=>{
+    const activeEditor = atom.workspace.getActiveTextEditor();
+    const path = activeEditor && activeEditor.getPath();
+    if (!path) return null;
+    return repo.relativize(path);
+};
+var $99c676eeff6e9a85$export$2e2bcd8739ae039 = async (checkoutEverything = false)=>{
+    const repo = await (0, $eQF7Z.default).getCurrent();
+    if (!repo) return atom.notifications.addInfo("No repository found");
+    const path = checkoutEverything ? "." : $99c676eeff6e9a85$var$getCurrentFileInRepo(repo) || ".";
+    const result = await repo.resetChanges(path);
+    (0, $9JoOT.default).record({
+        repoName: repo.getName(),
+        message: `reset changes in ${path}`,
+        ...result
+    });
+};
 
 });
 
@@ -2288,81 +3089,6 @@ parcelRegister("kVpWz", function(module, exports) {
 }).call(module.exports);
 
 });
-parcelRegister("baLSq", function(module, exports) {
-
-(function() {
-    var $$, ListView, SelectListView;
-    ({ $$: $$, SelectListView: SelectListView } = $dp3SY$atomspacepenviews);
-    module.exports = ListView = class ListView extends SelectListView {
-        initialize(data, onConfirm) {
-            this.data = data;
-            this.onConfirm = onConfirm;
-            super.initialize();
-            this.addClass('git-branch');
-            this.show();
-            this.parseData();
-            return this.currentPane = atom.workspace.getActivePane();
-        }
-        parseData() {
-            var branches, items;
-            items = this.data.split("\n");
-            branches = [];
-            items.forEach(function(item) {
-                var name;
-                item = item.replace(/\s/g, '');
-                name = item.startsWith("*") ? item.slice(1) : item;
-                if (item !== '') return branches.push({
-                    name: name
-                });
-            });
-            this.setItems(branches);
-            return this.focusFilterEditor();
-        }
-        getFilterKey() {
-            return 'name';
-        }
-        show() {
-            if (this.panel == null) this.panel = atom.workspace.addModalPanel({
-                item: this
-            });
-            this.panel.show();
-            return this.storeFocusedElement();
-        }
-        cancelled() {
-            return this.hide();
-        }
-        hide() {
-            var ref;
-            return (ref = this.panel) != null ? ref.destroy() : void 0;
-        }
-        viewForItem({ name: name }) {
-            var current;
-            current = false;
-            if (name.startsWith("*")) {
-                name = name.slice(1);
-                current = true;
-            }
-            return $$(function() {
-                return this.li(name, ()=>{
-                    return this.div({
-                        class: 'pull-right'
-                    }, ()=>{
-                        if (current) return this.span('HEAD');
-                    });
-                });
-            });
-        }
-        confirmed(item) {
-            var ref;
-            this.onConfirm(item);
-            this.cancel();
-            if ((ref = this.currentPane) != null ? ref.isAlive() : void 0) return this.currentPane.activate();
-        }
-    };
-}).call(module.exports);
-
-});
-
 
 
 
@@ -3269,6 +3995,112 @@ parcelRegister("ggLle", function(module, exports) {
 
 });
 
+parcelRegister("jd638", function(module, exports) {
+
+$parcel$export(module.exports, "default", () => $dfc3ec8b2e007de8$export$2e2bcd8739ae039);
+
+var $9JoOT = parcelRequire("9JoOT");
+
+var $eQF7Z = parcelRequire("eQF7Z");
+
+var $crP9p = parcelRequire("crP9p");
+var $dfc3ec8b2e007de8$export$2e2bcd8739ae039 = async (options = {
+    prune: false
+})=>{
+    const repo = await (0, $eQF7Z.default).getCurrent();
+    if (!repo) return atom.notifications.addInfo("No repository found");
+    const remotes = await repo.getRemoteNames();
+    let chosenRemote;
+    if (remotes.length === 1) chosenRemote = remotes[0];
+    else chosenRemote = await new (0, $crP9p.default)(remotes).result;
+    const result = await repo.fetch(chosenRemote, options);
+    (0, $9JoOT.default).record({
+        repoName: repo.getName(),
+        message: `fetch ${options.prune ? "--prune" : ""} from ${chosenRemote}`,
+        ...result
+    });
+};
+
+});
+parcelRegister("crP9p", function(module, exports) {
+
+$parcel$export(module.exports, "default", () => $90ffaf1eaeffe5b9$export$2e2bcd8739ae039);
+
+class $90ffaf1eaeffe5b9$export$2e2bcd8739ae039 {
+    constructor(remotes, options = {}){
+        this.disposables = new (0, $dp3SY$atom.CompositeDisposable)();
+        this.emitter = new (0, $dp3SY$atom.Emitter)();
+        this.isAttached = false;
+        this.destroy = ()=>{
+            this.disposables.dispose();
+        };
+        this.listView = new SelectList({
+            items: remotes.map((remote)=>({
+                    name: remote
+                })),
+            emptyMessage: "No remotes for this repository",
+            filterKeyForItem: (item)=>item.name,
+            elementForItem: (item, _options)=>{
+                const li = document.createElement("li");
+                li.textContent = item.name;
+                return li;
+            },
+            didCancelSelection: ()=>{
+                this.destroy();
+                this.emitter.emit("did-cancel", "User aborted");
+            },
+            didConfirmSelection: (item)=>{
+                this.emitter.emit("did-confirm", item.name);
+                this.destroy();
+            },
+            ...options
+        });
+        this.disposables.add(new (0, $dp3SY$atom.Disposable)(()=>this.listView.destroy()));
+        this.result = new Promise((resolve, reject)=>{
+            this.emitter.once("did-cancel", reject);
+            this.emitter.once("did-confirm", resolve);
+        });
+        this.attach();
+    }
+    attach() {
+        this.previouslyFocusedElement = document.activeElement;
+        this.panel = atom.workspace.addModalPanel({
+            item: this.listView.element
+        });
+        this.listView.focus();
+        this.isAttached = true;
+        this.disposables.add(new (0, $dp3SY$atom.Disposable)(()=>{
+            var _a;
+            this.panel.destroy();
+            (_a = this.previouslyFocusedElement) === null || _a === void 0 || _a.focus();
+        }));
+    }
+}
+
+});
+
+
+parcelRegister("eaDLy", function(module, exports) {
+
+$parcel$export(module.exports, "default", () => $a510d88ae10e3d74$export$2e2bcd8739ae039);
+
+var $9JoOT = parcelRequire("9JoOT");
+
+var $eQF7Z = parcelRequire("eQF7Z");
+var $a510d88ae10e3d74$export$2e2bcd8739ae039 = async ()=>{
+    const repos = (await Promise.all(atom.project.getDirectories().map(atom.project.repositoryForDirectory.bind(atom.project)))).filter(Boolean).map((r)=>new (0, $eQF7Z.default)(r));
+    repos.forEach(async (repo)=>{
+        const result = await repo.fetch();
+        (0, $9JoOT.default).record({
+            repoName: repo.getName(),
+            message: `fetching from all remotes in ${repo.getName()}`,
+            ...result
+        });
+    });
+};
+
+});
+
 parcelRegister("lBjNq", function(module, exports) {
 
 
@@ -3759,6 +4591,142 @@ parcelRegister("271rL", function(module, exports) {
 });
 
 
+
+parcelRegister("km474", function(module, exports) {
+
+$parcel$export(module.exports, "default", () => $ed190d8091e4900c$export$2e2bcd8739ae039);
+
+var $9JoOT = parcelRequire("9JoOT");
+
+var $eQF7Z = parcelRequire("eQF7Z");
+
+var $crP9p = parcelRequire("crP9p");
+var $ed190d8091e4900c$export$2e2bcd8739ae039 = async ()=>{
+    const repo = await (0, $eQF7Z.default).getCurrent();
+    if (!repo) return atom.notifications.addInfo("No repository found");
+    const remotes = await repo.getRemoteNames();
+    if (remotes.length === 0) atom.notifications.addInfo("There is no remote repository to pull from.");
+    else {
+        const shouldRebase = atom.config.get("pulsar-git-plus.remoteInteractions.pullRebase") === true;
+        const shouldAutostash = atom.config.get("pulsar-git-plus.remoteInteractions.pullAutostash") === true;
+        const pullOptions = {
+            rebase: shouldRebase,
+            autostash: shouldAutostash
+        };
+        if (atom.config.get("pulsar-git-plus.remoteInteractions.promptForBranch") === true) {
+            let chosenRemote;
+            if (remotes.length === 1) chosenRemote = remotes[0];
+            else chosenRemote = await new (0, $crP9p.default)(remotes).result;
+            let chosenBranch;
+            const branches = await repo.getBranchesForRemote(chosenRemote);
+            if (branches.length === 1) chosenBranch = branches[0];
+            else chosenBranch = await new (0, $crP9p.default)(branches, {
+                infoMessage: `Select branch on ${chosenRemote}`
+            }).result;
+            pullOptions.remote = chosenRemote;
+            pullOptions.branch = chosenBranch;
+        }
+        const notification = atom.notifications.addInfo("Pulling...", {
+            dismissable: true
+        });
+        const result = await repo.pull(pullOptions);
+        (0, $9JoOT.default).record({
+            repoName: repo.getName(),
+            message: `pull`,
+            ...result
+        });
+        notification.dismiss();
+    }
+};
+
+});
+
+parcelRegister("cMzzd", function(module, exports) {
+
+$parcel$export(module.exports, "default", () => $94e58e9d163da68a$export$2e2bcd8739ae039);
+
+var $9JoOT = parcelRequire("9JoOT");
+
+var $eQF7Z = parcelRequire("eQF7Z");
+
+var $crP9p = parcelRequire("crP9p");
+var $94e58e9d163da68a$export$2e2bcd8739ae039 = async (setUpstream = false)=>{
+    const repo = await (0, $eQF7Z.default).getCurrent();
+    if (!repo) return atom.notifications.addInfo("No repository found");
+    const repoName = repo.getName();
+    const pushOptions = {
+        setUpstream: setUpstream
+    };
+    const remotes = await repo.getRemoteNames();
+    if (remotes.length === 0) atom.notifications.addInfo("There is no remote repository to push to.");
+    else {
+        if (setUpstream) {
+            pushOptions.setUpstream = true;
+            pushOptions.remote = remotes[0];
+            pushOptions.branch = "HEAD";
+        } else {
+            if (atom.config.get("pulsar-git-plus.remoteInteractions.promptForBranch")) {
+                let chosenRemote;
+                if (remotes.length === 1) chosenRemote = remotes[0];
+                else chosenRemote = await new (0, $crP9p.default)(remotes).result;
+                let chosenBranch;
+                const branches = await repo.getBranchesForRemote(chosenRemote);
+                if (branches.length === 1) chosenBranch = branches[0];
+                else chosenBranch = await new (0, $crP9p.default)(branches, {
+                    infoMessage: `Select branch on ${chosenRemote}`
+                }).result;
+                pushOptions.remote = chosenRemote;
+                pushOptions.branch = chosenBranch;
+            }
+            if (atom.config.get("pulsar-git-plus.remoteInteractions.pullBeforePush")) {
+                const result = await repo.pull({
+                    rebase: atom.config.get("pulsar-git-plus.remoteInteractions.pullRebase") === true,
+                    autostash: atom.config.get("pulsar-git-plus.remoteInteractions.pullAutostash") === true,
+                    remote: pushOptions.remote,
+                    branch: pushOptions.remote
+                });
+                (0, $9JoOT.default).record({
+                    message: "pull before push",
+                    repoName: repoName,
+                    ...result
+                });
+                if (result.failed) return;
+            }
+        }
+        const notification = atom.notifications.addInfo("Pushing...", {
+            dismissable: true
+        });
+        const result = await repo.push(pushOptions);
+        notification.dismiss();
+        (0, $9JoOT.default).record({
+            message: `push`,
+            repoName: repoName,
+            ...result
+        });
+    }
+};
+
+});
+
+parcelRegister("3piiI", function(module, exports) {
+
+$parcel$export(module.exports, "default", () => $27b1e7100e12e6c6$export$2e2bcd8739ae039);
+
+var $9JoOT = parcelRequire("9JoOT");
+
+var $eQF7Z = parcelRequire("eQF7Z");
+var $27b1e7100e12e6c6$export$2e2bcd8739ae039 = async ()=>{
+    const repo = await (0, $eQF7Z.default).getCurrent();
+    if (!repo) return atom.notifications.addInfo("No repository found");
+    const result = await repo.reset();
+    (0, $9JoOT.default).record({
+        repoName: repo.getName(),
+        message: "reset index",
+        ...result
+    });
+};
+
+});
 
 parcelRegister("2mdJF", function(module, exports) {
 
@@ -4316,6 +5284,127 @@ parcelRegister("9ReiG", function(module, exports) {
 });
 
 
+
+parcelRegister("dMIZz", function(module, exports) {
+
+$parcel$defineInteropFlag(module.exports);
+
+$parcel$export(module.exports, "default", () => $a092a8918b485386$export$2e2bcd8739ae039);
+
+
+var $9JoOT = parcelRequire("9JoOT");
+
+var $eQF7Z = parcelRequire("eQF7Z");
+class $a092a8918b485386$var$StashListView {
+    constructor(stashes, handleSelection){
+        this.disposables = new (0, $dp3SY$atom.CompositeDisposable)();
+        this.isAttached = false;
+        this.destroy = ()=>{
+            this.disposables.dispose();
+        };
+        this.listView = new SelectList({
+            items: stashes,
+            emptyMessage: "Your stash is empty",
+            filterKeyForItem: (stash)=>stash.content,
+            elementForItem: (stash, _options)=>{
+                const li = document.createElement("li");
+                li.textContent = `${stash.index}: ${stash.label}`;
+                return li;
+            },
+            didCancelSelection: ()=>{
+                this.destroy();
+            },
+            didConfirmSelection: (stash)=>{
+                handleSelection(stash);
+                this.destroy();
+            }
+        });
+        this.disposables.add(new (0, $dp3SY$atom.Disposable)(()=>this.listView.destroy()));
+        this.attach();
+    }
+    attach() {
+        this.previouslyFocusedElement = document.activeElement;
+        this.panel = atom.workspace.addModalPanel({
+            item: this.listView.element
+        });
+        this.listView.focus();
+        this.isAttached = true;
+        this.disposables.add(new (0, $dp3SY$atom.Disposable)(()=>{
+            var _a;
+            this.panel.destroy();
+            (_a = this.previouslyFocusedElement) === null || _a === void 0 || _a.focus();
+        }));
+    }
+}
+class $a092a8918b485386$var$StashOptionsView {
+    constructor(stash, handleSelection){
+        this.disposables = new (0, $dp3SY$atom.CompositeDisposable)();
+        this.isAttached = false;
+        this.destroy = ()=>{
+            this.disposables.dispose();
+        };
+        this.listView = new SelectList({
+            items: Object.entries((0, $eQF7Z.StashCommands)).map((entry)=>({
+                    label: entry[0],
+                    ...entry[1]
+                })),
+            filterKeyForItem: (command)=>command.label,
+            elementForItem: (command, _options)=>{
+                const li = document.createElement("li");
+                const labelDiv = document.createElement("div");
+                labelDiv.classList.add("text-highlight");
+                labelDiv.textContent = command.label;
+                const infoDiv = document.createElement("div");
+                infoDiv.classList.add("text-info");
+                infoDiv.textContent = stash.label;
+                li.append(labelDiv, infoDiv);
+                return li;
+            },
+            didCancelSelection: this.destroy,
+            didConfirmSelection: (command)=>{
+                handleSelection(command);
+                this.destroy();
+            }
+        });
+        this.disposables.add(new (0, $dp3SY$atom.Disposable)(()=>this.listView.destroy()));
+        this.attach();
+    }
+    attach() {
+        this.previouslyFocusedElement = document.activeElement;
+        this.panel = atom.workspace.addModalPanel({
+            item: this.listView.element
+        });
+        this.listView.focus();
+        this.isAttached = true;
+        this.disposables.add(new (0, $dp3SY$atom.Disposable)(()=>{
+            var _a;
+            this.panel.destroy();
+            (_a = this.previouslyFocusedElement) === null || _a === void 0 || _a.focus();
+        }));
+    }
+    focus() {
+        if (this.isAttached) this.listView.focus();
+    }
+}
+var $a092a8918b485386$export$2e2bcd8739ae039 = async ()=>{
+    const repo = await (0, $eQF7Z.default).getCurrent();
+    if (!repo) return atom.notifications.addInfo("No repository found");
+    const stashes = await repo.getStashes();
+    new $a092a8918b485386$var$StashListView(stashes, (stash)=>{
+        const optionsView = new $a092a8918b485386$var$StashOptionsView(stash, async (command)=>{
+            repo.actOnStash(stash, command).then((result)=>{
+                (0, $9JoOT.default).record({
+                    repoName: repo.getName(),
+                    message: `stash@{${stash.index}} ${command.pastTense}`,
+                    ...result
+                });
+            });
+        });
+        optionsView.focus();
+    });
+};
+
+});
 
 parcelRegister("7OvTn", function(module, exports) {
 
@@ -5166,1091 +6255,6 @@ parcelRegister("7u2hg", function(module, exports) {
 
 });
 
-parcelRegister("hH1op", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $ce178863e42faca6$export$2e2bcd8739ae039);
-
-var $9JoOT = parcelRequire("9JoOT");
-
-var $eQF7Z = parcelRequire("eQF7Z");
-const $ce178863e42faca6$var$getCurrentFileInRepo = (repo)=>{
-    const activeEditor = atom.workspace.getActiveTextEditor();
-    const path = activeEditor && activeEditor.getPath();
-    if (!path) return null;
-    return repo.relativize(path);
-};
-var $ce178863e42faca6$export$2e2bcd8739ae039 = async (stageEverything = false)=>{
-    const repo = await (0, $eQF7Z.default).getCurrent();
-    if (!repo) return atom.notifications.addInfo("No repository found");
-    const path = stageEverything ? "." : $ce178863e42faca6$var$getCurrentFileInRepo(repo) || ".";
-    const result = await repo.stage([
-        path
-    ]);
-    (0, $9JoOT.default).record({
-        repoName: repo.getName(),
-        message: `add ${path}`,
-        ...result
-    });
-};
-
-});
-
-parcelRegister("km474", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $ed190d8091e4900c$export$2e2bcd8739ae039);
-
-var $9JoOT = parcelRequire("9JoOT");
-
-var $eQF7Z = parcelRequire("eQF7Z");
-
-var $crP9p = parcelRequire("crP9p");
-var $ed190d8091e4900c$export$2e2bcd8739ae039 = async ()=>{
-    const repo = await (0, $eQF7Z.default).getCurrent();
-    if (!repo) return atom.notifications.addInfo("No repository found");
-    const remotes = await repo.getRemoteNames();
-    if (remotes.length === 0) atom.notifications.addInfo("There is no remote repository to pull from.");
-    else {
-        const shouldRebase = atom.config.get("pulsar-git-plus.remoteInteractions.pullRebase") === true;
-        const shouldAutostash = atom.config.get("pulsar-git-plus.remoteInteractions.pullAutostash") === true;
-        const pullOptions = {
-            rebase: shouldRebase,
-            autostash: shouldAutostash
-        };
-        if (atom.config.get("pulsar-git-plus.remoteInteractions.promptForBranch") === true) {
-            let chosenRemote;
-            if (remotes.length === 1) chosenRemote = remotes[0];
-            else chosenRemote = await new (0, $crP9p.default)(remotes).result;
-            let chosenBranch;
-            const branches = await repo.getBranchesForRemote(chosenRemote);
-            if (branches.length === 1) chosenBranch = branches[0];
-            else chosenBranch = await new (0, $crP9p.default)(branches, {
-                infoMessage: `Select branch on ${chosenRemote}`
-            }).result;
-            pullOptions.remote = chosenRemote;
-            pullOptions.branch = chosenBranch;
-        }
-        const notification = atom.notifications.addInfo("Pulling...", {
-            dismissable: true
-        });
-        const result = await repo.pull(pullOptions);
-        (0, $9JoOT.default).record({
-            repoName: repo.getName(),
-            message: `pull`,
-            ...result
-        });
-        notification.dismiss();
-    }
-};
-
-});
-parcelRegister("crP9p", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $90ffaf1eaeffe5b9$export$2e2bcd8739ae039);
-
-class $90ffaf1eaeffe5b9$export$2e2bcd8739ae039 {
-    constructor(remotes, options = {}){
-        this.disposables = new (0, $dp3SY$atom.CompositeDisposable)();
-        this.emitter = new (0, $dp3SY$atom.Emitter)();
-        this.isAttached = false;
-        this.destroy = ()=>{
-            this.disposables.dispose();
-        };
-        this.listView = new SelectList({
-            items: remotes.map((remote)=>({
-                    name: remote
-                })),
-            emptyMessage: "No remotes for this repository",
-            filterKeyForItem: (item)=>item.name,
-            elementForItem: (item, _options)=>{
-                const li = document.createElement("li");
-                li.textContent = item.name;
-                return li;
-            },
-            didCancelSelection: ()=>{
-                this.destroy();
-                this.emitter.emit("did-cancel", "User aborted");
-            },
-            didConfirmSelection: (item)=>{
-                this.emitter.emit("did-confirm", item.name);
-                this.destroy();
-            },
-            ...options
-        });
-        this.disposables.add(new (0, $dp3SY$atom.Disposable)(()=>this.listView.destroy()));
-        this.result = new Promise((resolve, reject)=>{
-            this.emitter.once("did-cancel", reject);
-            this.emitter.once("did-confirm", resolve);
-        });
-        this.attach();
-    }
-    attach() {
-        this.previouslyFocusedElement = document.activeElement;
-        this.panel = atom.workspace.addModalPanel({
-            item: this.listView.element
-        });
-        this.listView.focus();
-        this.isAttached = true;
-        this.disposables.add(new (0, $dp3SY$atom.Disposable)(()=>{
-            this.panel.destroy();
-            this.previouslyFocusedElement && this.previouslyFocusedElement.focus();
-        }));
-    }
-}
-
-});
-
-
-parcelRegister("cMzzd", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $94e58e9d163da68a$export$2e2bcd8739ae039);
-
-var $9JoOT = parcelRequire("9JoOT");
-
-var $eQF7Z = parcelRequire("eQF7Z");
-
-var $crP9p = parcelRequire("crP9p");
-var $94e58e9d163da68a$export$2e2bcd8739ae039 = async (setUpstream = false)=>{
-    const repo = await (0, $eQF7Z.default).getCurrent();
-    if (!repo) return atom.notifications.addInfo("No repository found");
-    const repoName = repo.getName();
-    const pushOptions = {
-        setUpstream: setUpstream
-    };
-    const remotes = await repo.getRemoteNames();
-    if (remotes.length === 0) atom.notifications.addInfo("There is no remote repository to push to.");
-    else {
-        if (setUpstream) {
-            pushOptions.setUpstream = true;
-            pushOptions.remote = remotes[0];
-            pushOptions.branch = "HEAD";
-        } else {
-            if (atom.config.get("pulsar-git-plus.remoteInteractions.promptForBranch")) {
-                let chosenRemote;
-                if (remotes.length === 1) chosenRemote = remotes[0];
-                else chosenRemote = await new (0, $crP9p.default)(remotes).result;
-                let chosenBranch;
-                const branches = await repo.getBranchesForRemote(chosenRemote);
-                if (branches.length === 1) chosenBranch = branches[0];
-                else chosenBranch = await new (0, $crP9p.default)(branches, {
-                    infoMessage: `Select branch on ${chosenRemote}`
-                }).result;
-                pushOptions.remote = chosenRemote;
-                pushOptions.branch = chosenBranch;
-            }
-            if (atom.config.get("pulsar-git-plus.remoteInteractions.pullBeforePush")) {
-                const result = await repo.pull({
-                    rebase: atom.config.get("pulsar-git-plus.remoteInteractions.pullRebase") === true,
-                    autostash: atom.config.get("pulsar-git-plus.remoteInteractions.pullAutostash") === true,
-                    remote: pushOptions.remote,
-                    branch: pushOptions.remote
-                });
-                (0, $9JoOT.default).record({
-                    message: "pull before push",
-                    repoName: repoName,
-                    ...result
-                });
-                if (result.failed) return;
-            }
-        }
-        const notification = atom.notifications.addInfo("Pushing...", {
-            dismissable: true
-        });
-        const result = await repo.push(pushOptions);
-        notification.dismiss();
-        (0, $9JoOT.default).record({
-            message: `push`,
-            repoName: repoName,
-            ...result
-        });
-    }
-};
-
-});
-
-parcelRegister("3piiI", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $27b1e7100e12e6c6$export$2e2bcd8739ae039);
-
-var $9JoOT = parcelRequire("9JoOT");
-
-var $eQF7Z = parcelRequire("eQF7Z");
-var $27b1e7100e12e6c6$export$2e2bcd8739ae039 = async ()=>{
-    const repo = await (0, $eQF7Z.default).getCurrent();
-    if (!repo) return atom.notifications.addInfo("No repository found");
-    const result = await repo.reset();
-    (0, $9JoOT.default).record({
-        repoName: repo.getName(),
-        message: "reset index",
-        ...result
-    });
-};
-
-});
-
-parcelRegister("jd638", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $dfc3ec8b2e007de8$export$2e2bcd8739ae039);
-
-var $9JoOT = parcelRequire("9JoOT");
-
-var $eQF7Z = parcelRequire("eQF7Z");
-
-var $crP9p = parcelRequire("crP9p");
-var $dfc3ec8b2e007de8$export$2e2bcd8739ae039 = async (options = {
-    prune: false
-})=>{
-    const repo = await (0, $eQF7Z.default).getCurrent();
-    if (!repo) return atom.notifications.addInfo("No repository found");
-    const remotes = await repo.getRemoteNames();
-    let chosenRemote;
-    if (remotes.length === 1) chosenRemote = remotes[0];
-    else chosenRemote = await new (0, $crP9p.default)(remotes).result;
-    const result = await repo.fetch(chosenRemote, options);
-    (0, $9JoOT.default).record({
-        repoName: repo.getName(),
-        message: `fetch ${options.prune ? "--prune" : ""} from ${chosenRemote}`,
-        ...result
-    });
-};
-
-});
-
-parcelRegister("3iQun", function(module, exports) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-(function() {
-    var getCommands, git;
-    git = (parcelRequire("lppKC"));
-    getCommands = function() {
-        var GitCheckoutBranch, GitCheckoutNewBranch, GitCherryPick, GitCommit, GitCommitAmend, GitDeleteBranch, GitDiff, GitDiffAll, GitDiffBranchFiles, GitDiffBranches, GitDifftool, GitInit, GitLog, GitMerge, GitOpenChangedFiles, GitRebase, GitRemove, GitRun, GitShow, GitStageFiles, GitStageHunk, GitStashApply, GitStashDrop, GitStashPop, GitStashSave, GitStashSaveMessage, GitStatus, GitTags, ManageStashes, commands, gitAdd, gitAddModified, gitCheckoutFile, gitFetch, gitFetchInAllRepos, gitPull, gitPush, gitReset;
-        gitAdd = (parcelRequire("hH1op")).default;
-        gitAddModified = (parcelRequire("j90G6")).default;
-        GitCheckoutNewBranch = (parcelRequire("4y5U8"));
-        GitCheckoutBranch = (parcelRequire("2DNX4"));
-        GitDeleteBranch = (parcelRequire("3O1Aw"));
-        gitCheckoutFile = (parcelRequire("dcxBF")).default;
-        GitCherryPick = (parcelRequire("77LDn"));
-        GitCommit = (parcelRequire("3mGsE"));
-        GitCommitAmend = (parcelRequire("bXxVi"));
-        GitDiff = (parcelRequire("7c2RU"));
-        GitDiffBranches = (parcelRequire("3Pi7d"));
-        GitDiffBranchFiles = (parcelRequire("hD9Pz"));
-        GitDifftool = (parcelRequire("ejfzQ"));
-        GitDiffAll = (parcelRequire("ggLle"));
-        gitFetch = (parcelRequire("jd638")).default;
-        gitFetchInAllRepos = (parcelRequire("eaDLy")).default;
-        GitInit = (parcelRequire("lBjNq"));
-        GitLog = (parcelRequire("e4WFK"));
-        gitPull = (parcelRequire("km474")).default;
-        gitPush = (parcelRequire("cMzzd")).default;
-        gitReset = (parcelRequire("3piiI")).default;
-        GitRemove = (parcelRequire("2mdJF"));
-        GitShow = (parcelRequire("271rL"));
-        GitStageFiles = (parcelRequire("4BqoQ"));
-        GitStageHunk = (parcelRequire("lK3FM"));
-        ManageStashes = (parcelRequire("dMIZz"));
-        GitStashApply = (parcelRequire("7OvTn"));
-        GitStashDrop = (parcelRequire("hBbsd"));
-        GitStashPop = (parcelRequire("7xGEe"));
-        GitStashSave = (parcelRequire("cmRNj"));
-        GitStashSaveMessage = (parcelRequire("7TM1C"));
-        GitStatus = (parcelRequire("9xGRG"));
-        GitTags = (parcelRequire("8niyI"));
-        GitRun = (parcelRequire("ceh8S"));
-        GitMerge = (parcelRequire("d1WP8"));
-        GitRebase = (parcelRequire("l0YAk"));
-        GitOpenChangedFiles = (parcelRequire("7u2hg"));
-        commands = [];
-        return git.getRepo().then(function(repo) {
-            var currentFile, ref;
-            currentFile = repo.relativize((ref = atom.workspace.getActiveTextEditor()) != null ? ref.getPath() : void 0);
-            git.refresh(repo);
-            if (atom.config.get('pulsar-git-plus.experimental.customCommands')) commands = commands.concat((parcelRequire("crkkW")).getCustomCommands());
-            commands.push([
-                'pulsar-git-plus:add',
-                'Add',
-                gitAdd
-            ]);
-            commands.push([
-                'pulsar-git-plus:add-modified',
-                'Add Modified',
-                gitAddModified
-            ]);
-            commands.push([
-                'pulsar-git-plus:add-all',
-                'Add All',
-                function() {
-                    return gitAdd(true);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:log',
-                'Log',
-                function() {
-                    return GitLog(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:log-current-file',
-                'Log Current File',
-                function() {
-                    return GitLog(repo, {
-                        onlyCurrentFile: true
-                    });
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:remove-current-file',
-                'Remove Current File',
-                function() {
-                    return GitRemove(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:checkout-all-files',
-                'Checkout All Files',
-                function() {
-                    return gitCheckoutFile(true);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:checkout-current-file',
-                'Checkout Current File',
-                function() {
-                    return gitCheckoutFile();
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:commit',
-                'Commit',
-                function() {
-                    return GitCommit(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:commit-all',
-                'Commit All',
-                function() {
-                    return GitCommit(repo, {
-                        stageChanges: true
-                    });
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:commit-amend',
-                'Commit Amend',
-                function() {
-                    return GitCommitAmend(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:add-and-commit',
-                'Add And Commit',
-                function() {
-                    return git.add(repo, {
-                        file: currentFile
-                    }).then(function() {
-                        return GitCommit(repo);
-                    });
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:add-and-commit-and-push',
-                'Add And Commit And Push',
-                function() {
-                    return git.add(repo, {
-                        file: currentFile
-                    }).then(function() {
-                        return GitCommit(repo, {
-                            andPush: true
-                        });
-                    });
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:add-all-and-commit',
-                'Add All And Commit',
-                function() {
-                    return git.add(repo).then(function() {
-                        return GitCommit(repo);
-                    });
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:add-all-commit-and-push',
-                'Add All, Commit And Push',
-                function() {
-                    return git.add(repo).then(function() {
-                        return GitCommit(repo, {
-                            andPush: true
-                        });
-                    });
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:commit-all-and-push',
-                'Commit All And Push',
-                function() {
-                    return GitCommit(repo, {
-                        stageChanges: true,
-                        andPush: true
-                    });
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:checkout',
-                'Checkout',
-                function() {
-                    return GitCheckoutBranch(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:checkout-remote',
-                'Checkout Remote',
-                function() {
-                    return GitCheckoutBranch(repo, {
-                        remote: true
-                    });
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:new-branch',
-                'Checkout New Branch',
-                function() {
-                    return GitCheckoutNewBranch(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:delete-local-branch',
-                'Delete Local Branch',
-                function() {
-                    return GitDeleteBranch(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:delete-remote-branch',
-                'Delete Remote Branch',
-                function() {
-                    return GitDeleteBranch(repo, {
-                        remote: true
-                    });
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:delete-branch-local-and-remote',
-                'Delete Branch (Local and Remote)',
-                function() {
-                    return GitDeleteBranch(repo).then(function() {
-                        return GitDeleteBranch(repo, {
-                            remote: true
-                        });
-                    });
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:cherry-pick',
-                'Cherry-Pick',
-                function() {
-                    return GitCherryPick(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:diff',
-                'Diff',
-                function() {
-                    return GitDiff(repo, {
-                        file: currentFile
-                    });
-                }
-            ]);
-            if (atom.config.get('pulsar-git-plus.experimental.diffBranches')) {
-                commands.push([
-                    'pulsar-git-plus:diff-branches',
-                    'Diff branches',
-                    function() {
-                        return GitDiffBranches(repo);
-                    }
-                ]);
-                commands.push([
-                    'pulsar-git-plus:diff-branch-files',
-                    'Diff branch files',
-                    function() {
-                        return GitDiffBranchFiles(repo);
-                    }
-                ]);
-            }
-            commands.push([
-                'pulsar-git-plus:difftool',
-                'Difftool',
-                function() {
-                    return GitDifftool(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:diff-all',
-                'Diff All',
-                function() {
-                    return GitDiffAll(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:fetch',
-                'Fetch',
-                gitFetch
-            ]);
-            commands.push([
-                'pulsar-git-plus:fetch-all',
-                'Fetch All (Repos & Remotes)',
-                gitFetchInAllRepos
-            ]);
-            commands.push([
-                'pulsar-git-plus:fetch-prune',
-                'Fetch Prune',
-                function() {
-                    return gitFetch({
-                        prune: true
-                    });
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:pull',
-                'Pull',
-                gitPull
-            ]);
-            commands.push([
-                'pulsar-git-plus:push',
-                'Push',
-                gitPush
-            ]);
-            commands.push([
-                'pulsar-git-plus:push-set-upstream',
-                'Push -u',
-                function() {
-                    return gitPush(true);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:remove',
-                'Remove',
-                function() {
-                    return GitRemove(repo, {
-                        showSelector: true
-                    });
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:reset',
-                'Reset HEAD',
-                gitReset
-            ]);
-            commands.push([
-                'pulsar-git-plus:show',
-                'Show',
-                function() {
-                    return GitShow(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:stage-files',
-                'Stage Files',
-                function() {
-                    return GitStageFiles(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:stage-hunk',
-                'Stage Hunk',
-                function() {
-                    return GitStageHunk(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:manage-stashes',
-                'Manage Stashes',
-                ManageStashes.default
-            ]);
-            commands.push([
-                'pulsar-git-plus:stash-save',
-                'Stash: Save Changes',
-                function() {
-                    return GitStashSave(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:stash-save-message',
-                'Stash: Save Changes With Message',
-                function() {
-                    return GitStashSaveMessage(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:stash-pop',
-                'Stash: Apply (Pop)',
-                function() {
-                    return GitStashPop(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:stash-apply',
-                'Stash: Apply (Keep)',
-                function() {
-                    return GitStashApply(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:stash-delete',
-                'Stash: Delete (Drop)',
-                function() {
-                    return GitStashDrop(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:status',
-                'Status',
-                function() {
-                    return GitStatus(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:tags',
-                'Tags',
-                function() {
-                    return GitTags(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:run',
-                'Run',
-                function() {
-                    return new GitRun(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:merge',
-                'Merge',
-                function() {
-                    return GitMerge(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:merge-remote',
-                'Merge Remote',
-                function() {
-                    return GitMerge(repo, {
-                        remote: true
-                    });
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:merge-no-fast-forward',
-                'Merge without fast-forward',
-                function() {
-                    return GitMerge(repo, {
-                        noFastForward: true
-                    });
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:rebase',
-                'Rebase',
-                function() {
-                    return GitRebase(repo);
-                }
-            ]);
-            commands.push([
-                'pulsar-git-plus:git-open-changed-files',
-                'Open Changed Files',
-                function() {
-                    return GitOpenChangedFiles(repo);
-                }
-            ]);
-            return commands;
-        });
-    };
-    module.exports = getCommands;
-}).call(module.exports);
-
-});
-parcelRegister("j90G6", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $deff623bfa6a9949$export$2e2bcd8739ae039);
-
-var $9JoOT = parcelRequire("9JoOT");
-
-var $eQF7Z = parcelRequire("eQF7Z");
-var $deff623bfa6a9949$export$2e2bcd8739ae039 = async ()=>{
-    const repo = await (0, $eQF7Z.default).getCurrent();
-    if (!repo) return atom.notifications.addInfo("No repository found");
-    const result = await repo.stage([
-        "."
-    ], {
-        update: true
-    });
-    (0, $9JoOT.default).record({
-        repoName: repo.getName(),
-        message: `add modified files`,
-        ...result
-    });
-};
-
-});
-
-parcelRegister("2DNX4", function(module, exports) {
-
-
-var $lppKC = parcelRequire("lppKC");
-var $1ec5f8a8f0740fa9$require$git = $lppKC.default;
-
-var $gSFWX = parcelRequire("gSFWX");
-
-var $9JoOT = parcelRequire("9JoOT");
-var $1ec5f8a8f0740fa9$require$ActivityLogger = $9JoOT.default;
-
-var $eQF7Z = parcelRequire("eQF7Z");
-var $1ec5f8a8f0740fa9$require$Repository = $eQF7Z.default;
-
-var $baLSq = parcelRequire("baLSq");
-module.exports = (repo, options = {
-    remote: false
-})=>{
-    const args = options.remote ? [
-        'branch',
-        '-r',
-        '--no-color'
-    ] : [
-        'branch',
-        '--no-color'
-    ];
-    return $1ec5f8a8f0740fa9$require$git.cmd(args, {
-        cwd: repo.getWorkingDirectory()
-    }).then((data)=>{
-        return new $baLSq(data, ({ name: name })=>{
-            const args = options.remote ? [
-                'checkout',
-                name,
-                '--track'
-            ] : [
-                'checkout',
-                name
-            ];
-            const repoName = new $1ec5f8a8f0740fa9$require$Repository(repo).getName();
-            $1ec5f8a8f0740fa9$require$git.cmd(args, {
-                cwd: repo.getWorkingDirectory()
-            }).then((output)=>{
-                $1ec5f8a8f0740fa9$require$ActivityLogger.record({
-                    repoName: repoName,
-                    message: `checkout to ${name}`,
-                    output: output
-                });
-                atom.workspace.getTextEditors().forEach((editor)=>{
-                    try {
-                        const path = editor.getPath();
-                        console.log(`Git-plus: editor.getPath() returned '${path}'`);
-                        if (path && path.toString) $dp3SY$fsplus.exists(path.toString(), (exists)=>{
-                            if (!exists) editor.destroy();
-                        });
-                    } catch (error) {
-                        $gSFWX.addWarning('There was an error closing windows for non-existing files after the checkout. Please check the dev console.');
-                        console.info('Git-plus: please take a screenshot of what has been printed in the console and add it to the issue on github at https://github.com/albert200000/git-plus/issues/139', error);
-                    }
-                });
-                $1ec5f8a8f0740fa9$require$git.refresh(repo);
-            }).catch((error)=>{
-                $1ec5f8a8f0740fa9$require$ActivityLogger.record({
-                    repoName: repoName,
-                    message: `checkout to ${name}`,
-                    output: error,
-                    failed: true
-                });
-            });
-        });
-    });
-};
-
-});
-
-parcelRegister("3O1Aw", function(module, exports) {
-
-var $lppKC = parcelRequire("lppKC");
-var $2c5745f95cc29502$require$git = $lppKC.default;
-
-var $gSFWX = parcelRequire("gSFWX");
-
-var $9JoOT = parcelRequire("9JoOT");
-var $2c5745f95cc29502$require$ActivityLogger = $9JoOT.default;
-
-var $eQF7Z = parcelRequire("eQF7Z");
-var $2c5745f95cc29502$require$Repository = $eQF7Z.default;
-
-var $baLSq = parcelRequire("baLSq");
-module.exports = (repo, options = {
-    remote: false
-})=>{
-    const args = options.remote ? [
-        'branch',
-        '-r',
-        '--no-color'
-    ] : [
-        'branch',
-        '--no-color'
-    ];
-    return $2c5745f95cc29502$require$git.cmd(args, {
-        cwd: repo.getWorkingDirectory()
-    }).then((data)=>{
-        return new $baLSq(data, ({ name: name })=>{
-            let args, notification;
-            if (options.remote) {
-                const remote = name.substring(0, name.indexOf('/'));
-                const branch = name.substring(name.indexOf('/') + 1);
-                notification = $gSFWX.addInfo(`Deleting remote branch ${branch}`, {
-                    dismissable: true
-                });
-                args = [
-                    'push',
-                    remote,
-                    '--delete',
-                    branch
-                ];
-            } else {
-                const branch = name;
-                args = [
-                    'branch',
-                    '-D',
-                    branch
-                ];
-            }
-            const message = `delete ${options.remote ? 'remote ' : ''} branch '${args[args.length - 1]}'`;
-            const repoName = new $2c5745f95cc29502$require$Repository(repo).getName();
-            $2c5745f95cc29502$require$git.cmd(args, {
-                cwd: repo.getWorkingDirectory()
-            }).then((output)=>{
-                notification && notification.dismiss();
-                $gSFWX.addSuccess(output);
-                $2c5745f95cc29502$require$ActivityLogger.record({
-                    repoName: repoName,
-                    message: message,
-                    output: output
-                });
-            }).catch((error)=>{
-                notification && notification.dismiss();
-                $gSFWX.addError(error);
-                $2c5745f95cc29502$require$ActivityLogger.record({
-                    repoName: repoName,
-                    message: message,
-                    output: error,
-                    failed: true
-                });
-            });
-        });
-    });
-};
-
-});
-
-parcelRegister("dcxBF", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $99c676eeff6e9a85$export$2e2bcd8739ae039);
-
-var $9JoOT = parcelRequire("9JoOT");
-
-var $eQF7Z = parcelRequire("eQF7Z");
-const $99c676eeff6e9a85$var$getCurrentFileInRepo = (repo)=>{
-    const activeEditor = atom.workspace.getActiveTextEditor();
-    const path = activeEditor && activeEditor.getPath();
-    if (!path) return null;
-    return repo.relativize(path);
-};
-var $99c676eeff6e9a85$export$2e2bcd8739ae039 = async (checkoutEverything = false)=>{
-    const repo = await (0, $eQF7Z.default).getCurrent();
-    if (!repo) return atom.notifications.addInfo("No repository found");
-    const path = checkoutEverything ? "." : $99c676eeff6e9a85$var$getCurrentFileInRepo(repo) || ".";
-    const result = await repo.resetChanges(path);
-    (0, $9JoOT.default).record({
-        repoName: repo.getName(),
-        message: `reset changes in ${path}`,
-        ...result
-    });
-};
-
-});
-
-parcelRegister("eaDLy", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $a510d88ae10e3d74$export$2e2bcd8739ae039);
-
-var $9JoOT = parcelRequire("9JoOT");
-
-var $eQF7Z = parcelRequire("eQF7Z");
-var $a510d88ae10e3d74$export$2e2bcd8739ae039 = async ()=>{
-    const repos = (await Promise.all(atom.project.getDirectories().map(atom.project.repositoryForDirectory.bind(atom.project)))).filter(Boolean).map((r)=>new (0, $eQF7Z.default)(r));
-    repos.forEach(async (repo)=>{
-        const result = await repo.fetch();
-        (0, $9JoOT.default).record({
-            repoName: repo.getName(),
-            message: `fetching from all remotes in ${repo.getName()}`,
-            ...result
-        });
-    });
-};
-
-});
-
-parcelRegister("dMIZz", function(module, exports) {
-
-$parcel$defineInteropFlag(module.exports);
-
-$parcel$export(module.exports, "default", () => $a092a8918b485386$export$2e2bcd8739ae039);
-
-
-var $9JoOT = parcelRequire("9JoOT");
-
-var $eQF7Z = parcelRequire("eQF7Z");
-class $a092a8918b485386$var$StashListView {
-    constructor(stashes, handleSelection){
-        this.disposables = new (0, $dp3SY$atom.CompositeDisposable)();
-        this.isAttached = false;
-        this.destroy = ()=>{
-            this.disposables.dispose();
-        };
-        this.listView = new SelectList({
-            items: stashes,
-            emptyMessage: "Your stash is empty",
-            filterKeyForItem: (stash)=>stash.content,
-            elementForItem: (stash, _options)=>{
-                const li = document.createElement("li");
-                li.textContent = `${stash.index}: ${stash.label}`;
-                return li;
-            },
-            didCancelSelection: ()=>{
-                this.destroy();
-            },
-            didConfirmSelection: (stash)=>{
-                handleSelection(stash);
-                this.destroy();
-            }
-        });
-        this.disposables.add(new (0, $dp3SY$atom.Disposable)(()=>this.listView.destroy()));
-        this.attach();
-    }
-    attach() {
-        this.previouslyFocusedElement = document.activeElement;
-        this.panel = atom.workspace.addModalPanel({
-            item: this.listView.element
-        });
-        this.listView.focus();
-        this.isAttached = true;
-        this.disposables.add(new (0, $dp3SY$atom.Disposable)(()=>{
-            this.panel.destroy();
-            this.previouslyFocusedElement && this.previouslyFocusedElement.focus();
-        }));
-    }
-}
-class $a092a8918b485386$var$StashOptionsView {
-    constructor(stash, handleSelection){
-        this.disposables = new (0, $dp3SY$atom.CompositeDisposable)();
-        this.isAttached = false;
-        this.destroy = ()=>{
-            this.disposables.dispose();
-        };
-        this.listView = new SelectList({
-            items: Object.entries((0, $eQF7Z.StashCommands)).map((entry)=>({
-                    label: entry[0],
-                    ...entry[1]
-                })),
-            filterKeyForItem: (command)=>command.label,
-            elementForItem: (command, _options)=>{
-                const li = document.createElement("li");
-                const labelDiv = document.createElement("div");
-                labelDiv.classList.add("text-highlight");
-                labelDiv.textContent = command.label;
-                const infoDiv = document.createElement("div");
-                infoDiv.classList.add("text-info");
-                infoDiv.textContent = stash.label;
-                li.append(labelDiv, infoDiv);
-                return li;
-            },
-            didCancelSelection: this.destroy,
-            didConfirmSelection: (command)=>{
-                handleSelection(command);
-                this.destroy();
-            }
-        });
-        this.disposables.add(new (0, $dp3SY$atom.Disposable)(()=>this.listView.destroy()));
-        this.attach();
-    }
-    attach() {
-        this.previouslyFocusedElement = document.activeElement;
-        this.panel = atom.workspace.addModalPanel({
-            item: this.listView.element
-        });
-        this.listView.focus();
-        this.isAttached = true;
-        this.disposables.add(new (0, $dp3SY$atom.Disposable)(()=>{
-            this.panel.destroy();
-            this.previouslyFocusedElement && this.previouslyFocusedElement.focus();
-        }));
-    }
-    focus() {
-        if (this.isAttached) this.listView.focus();
-    }
-}
-var $a092a8918b485386$export$2e2bcd8739ae039 = async ()=>{
-    const repo = await (0, $eQF7Z.default).getCurrent();
-    if (!repo) return atom.notifications.addInfo("No repository found");
-    const stashes = await repo.getStashes();
-    new $a092a8918b485386$var$StashListView(stashes, (stash)=>{
-        const optionsView = new $a092a8918b485386$var$StashOptionsView(stash, async (command)=>{
-            repo.actOnStash(stash, command).then((result)=>{
-                (0, $9JoOT.default).record({
-                    repoName: repo.getName(),
-                    message: `stash@{${stash.index}} ${command.pastTense}`,
-                    ...result
-                });
-            });
-        });
-        optionsView.focus();
-    });
-};
-
-});
-
 
 parcelRegister("folqK", function(module, exports) {
 
@@ -6961,7 +6965,8 @@ async function $e20c8f3279d546d3$export$a37e3c603d7117e5(treeView, all = false) 
     const repo = await (0, $eQF7Z.default).getForPath(path);
     if (!repo) return atom.notifications.addWarning(`No repository found for \`${path}\``);
     if (!all && !repo.isPathModified(path)) return atom.notifications.addInfo(`\`${repo.relativize(path)}\` has no changes to diff`);
-    all ? GitDiffAll(repo.repo) : GitDiff(repo.repo, {
+    if (all) GitDiffAll(repo.repo);
+    else GitDiff(repo.repo, {
         file: repo.relativize(path)
     });
 }
@@ -7506,8 +7511,8 @@ module.exports = {
     },
     deactivate () {
         this.subscriptions.dispose();
-        this.statusBarTile && this.statusBarTile.destroy();
-        this.outputView && this.outputView.destroy();
+        this.statusBarTile?.destroy();
+        this.outputView?.destroy();
         clearInterval(this.autoFetchInterval);
     },
     autoFetch (interval) {

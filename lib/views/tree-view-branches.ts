@@ -5,7 +5,7 @@ export class TreeViewBranchManager {
   private treeView: Services.TreeView;
   private renderedBranches = new Map<string, HTMLElement>();
   private subscriptions = new CompositeDisposable();
-  private repoSubscriptions = new Map<String, Disposable>();
+  private repoSubscriptions = new Map<string, Disposable>();
   private isEnabled = false;
 
   constructor(treeView: Services.TreeView) {

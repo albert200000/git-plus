@@ -64,7 +64,7 @@ class RepoListView {
     this.disposables.add(
       new Disposable(() => {
         this.panel!.destroy();
-        this.previouslyFocusedElement && this.previouslyFocusedElement.focus();
+        this.previouslyFocusedElement?.focus();
       })
     );
   }

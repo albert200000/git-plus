@@ -41,7 +41,7 @@ class StashListView {
     this.disposables.add(
       new Disposable(() => {
         this.panel!.destroy();
-        this.previouslyFocusedElement && this.previouslyFocusedElement.focus();
+        this.previouslyFocusedElement?.focus();
       })
     );
   }
@@ -95,7 +95,7 @@ class StashOptionsView {
     this.disposables.add(
       new Disposable(() => {
         this.panel!.destroy();
-        this.previouslyFocusedElement && this.previouslyFocusedElement.focus();
+        this.previouslyFocusedElement?.focus();
       })
     );
   }
