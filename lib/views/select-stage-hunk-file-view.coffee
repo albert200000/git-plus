@@ -7,7 +7,7 @@ module.exports =
 class SelectStageHunkFile extends SelectListView
 
   initialize: (@repo, items) ->
-    super
+    super()
     @show()
     @setItems items
     @focusFilterEditor()

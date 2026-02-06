@@ -20,7 +20,7 @@ fuzzyFilter = require('fuzzaldrin').filter
 #
 # class MySelectListView extends SelectListMultipleView
 #   initialize: ->
-#     super
+#     super()
 #     @addClass('overlay from-top')
 #     @setItems(['Hello', 'World'])
 #     atom.workspaceView.append(this)
@@ -38,7 +38,7 @@ class SelectListMultipleView extends SelectListView
   # This method can be overridden by subclasses but `super` should always
   # be called.
   initialize: ->
-    super
+    super()
     @selectedItems = []
     @list.addClass('mark-active')
 

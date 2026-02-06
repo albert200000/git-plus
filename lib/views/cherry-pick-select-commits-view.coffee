@@ -10,7 +10,7 @@ module.exports =
 class CherryPickSelectCommits extends SelectListMultipleView
 
   initialize: (@repo, data) ->
-    super
+    super()
     @show()
     @setItems(
       for item in data

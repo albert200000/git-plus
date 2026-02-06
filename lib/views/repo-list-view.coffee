@@ -1,10 +1,10 @@
 {$$, SelectListView} = require 'atom-space-pen-views'
-git = require '../git'
+git = require '../git.coffee'
 
 module.exports =
   class ListView extends SelectListView
     initialize: (@repos) ->
-      super
+      super()
       @currentPane = atom.workspace.getActivePane()
       @result = new Promise (resolve, reject) =>
         @resolve = resolve

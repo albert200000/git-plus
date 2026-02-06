@@ -8,7 +8,7 @@ SelectListMultipleView = require './select-list-multiple-view'
 module.exports =
 class SelectStageHunks extends SelectListMultipleView
   initialize: (@repo, data) ->
-    super
+    super()
     @patch_header = data[0]
     return @completed @_generateObjects(data[1..]) if data.length is 2
     @show()

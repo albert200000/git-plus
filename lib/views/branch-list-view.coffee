@@ -3,7 +3,7 @@
 module.exports =
 class ListView extends SelectListView
   initialize: (@data, @onConfirm) ->
-    super
+    super()
     @addClass('git-branch')
     @show()
     @parseData()

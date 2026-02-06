@@ -8,7 +8,7 @@ notifier = require '../notifier'
 module.exports =
 class StatusListView extends SelectListView
   initialize: (@repo, @data) ->
-    super
+    super()
     @show()
     @setItems @parseData @data
     @focusFilterEditor()

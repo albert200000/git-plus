@@ -8,7 +8,7 @@ Repository = require('../repository').default
 module.exports =
   class ListView extends SelectListView
     initialize: (@repo, @data) ->
-      super
+      super()
       @show()
       @parseData()
 

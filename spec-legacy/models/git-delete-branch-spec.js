@@ -1,4 +1,3 @@
-'use babel'
 const git = require('../../lib/git')
 const GitDeleteBranch = require('../../lib/models/git-delete-branch')
 

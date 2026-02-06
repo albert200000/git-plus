@@ -9,7 +9,7 @@ module.exports =
 class CherryPickSelectBranch extends SelectListView
 
   initialize: (@repo, items, @currentHead) ->
-    super
+    super()
     @show()
     @setItems items
     @focusFilterEditor()

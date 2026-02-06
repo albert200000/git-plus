@@ -9,7 +9,7 @@ RemoteListView = require '../views/remote-list-view'
 module.exports =
 class TagView extends SelectListView
   initialize: (@repo, @tag) ->
-    super
+    super()
     @show()
     @parseData()
 

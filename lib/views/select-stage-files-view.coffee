@@ -7,7 +7,7 @@ SelectListMultipleView = require './select-list-multiple-view'
 module.exports =
 class SelectStageFilesView extends SelectListMultipleView
   initialize: (@repo, items) ->
-    super
+    super()
     @selectedItems.push 'foobar' # hack to override super class behavior so ::completed will be called
     @show()
     @setItems items

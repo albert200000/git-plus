@@ -15,7 +15,7 @@ module.exports =
 class SelectStageFilesView extends SelectListMultipleView
 
   initialize: (@repo, items) ->
-    super
+    super()
     @show()
     @setItems items
     @focusFilterEditor()

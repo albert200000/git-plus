@@ -8,7 +8,7 @@ module.exports =
 class TagListView extends SelectListView
 
   initialize: (@repo, @data='') ->
-    super
+    super()
     @show()
     @parseData()
 

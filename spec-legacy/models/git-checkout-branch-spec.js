@@ -1,4 +1,3 @@
-'use babel'
 const git = require('../../lib/git')
 const GitCheckoutBranch = require('../../lib/models/git-checkout-branch')
 

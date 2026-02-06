@@ -10,7 +10,7 @@ RemoteBranchListView = require './remote-branch-list-view'
 module.exports =
 class ListView extends SelectListView
   initialize: (@repo, @data, {@mode, @tag, @extraArgs}={}) ->
-    super
+    super()
     @tag ?= ''
     @extraArgs ?= []
     @show()

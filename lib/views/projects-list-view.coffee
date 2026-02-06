@@ -4,7 +4,7 @@ git = require '../git'
 module.exports =
   class ListView extends SelectListView
     initialize: ->
-      super
+      super()
       @currentPane = atom.workspace.getActivePane()
       @result = new Promise (resolve, reject) =>
         @resolve = resolve

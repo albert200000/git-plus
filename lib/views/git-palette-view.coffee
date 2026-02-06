@@ -8,7 +8,7 @@ module.exports =
 class GitPaletteView extends SelectListView
 
   initialize: ->
-    super
+    super()
     @addClass('git-palette')
     @toggle()
 
