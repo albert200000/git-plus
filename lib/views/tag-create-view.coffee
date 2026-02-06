@@ -33,7 +33,7 @@ class TagCreateView extends View
 
   createTag: ->
     tag = name: @tagName.getModel().getText(), message: @tagMessage.getModel().getText()
-    flag = if atom.config.get('git-plus.tags.signTags') then '-s' else '-a'
+    flag = if atom.config.get('pulsar-git-plus.tags.signTags') then '-s' else '-a'
     repoName = new Repository(@repo).getName()
     git(['tag', flag, tag.name, '-m', tag.message], cwd: @repo.getWorkingDirectory())
     .then (result) ->

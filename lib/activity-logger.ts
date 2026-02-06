@@ -31,7 +31,7 @@ class ActivityLogger {
 
     if (
       record.failed &&
-      !atom.config.get("git-plus.general.alwaysOpenDockWithResult") &&
+      !atom.config.get("pulsar-git-plus.general.alwaysOpenDockWithResult") &&
       !viewController.isVisible(OutputViewContainer.URI)
     ) {
       atom.notifications.addError(`Unable to complete command: ${record.message}`, {
@@ -42,7 +42,7 @@ class ActivityLogger {
             onDidClick: () => {
               atom.commands.dispatch(
                 document.querySelector("atom-workspace")!,
-                "git-plus:toggle-output-view"
+                "pulsar-git-plus:toggle-output-view"
               );
             }
           }
@@ -53,7 +53,7 @@ class ActivityLogger {
     this._records.push(record);
     window.requestIdleCallback(() => {
       this.listeners.forEach(listener => listener(record));
-      if (atom.config.get("git-plus.general.alwaysOpenDockWithResult")) {
+      if (atom.config.get("pulsar-git-plus.general.alwaysOpenDockWithResult")) {
         viewController.getOutputView().show();
       }
     });

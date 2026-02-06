@@ -86,7 +86,7 @@ export default async function cmd(
     let output = "";
     const gitProcess = new BufferedProcess({
       // $FlowFixMe
-      command: atom.config.get("git-plus.general.gitPath") || "git",
+      command: atom.config.get("pulsar-git-plus.general.gitPath") || "git",
       args,
       options,
       stdout: data => (output += data.toString()),

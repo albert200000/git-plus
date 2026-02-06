@@ -35,24 +35,24 @@ export class Root extends React.Component<Props, State> {
       ActivityLogger.onDidRecordActivity(record => {
         this.setState(state => ({ latestId: record.id, records: [...state.records, record] }));
       }),
-      atom.commands.add("atom-workspace", "git-plus:copy", {
+      atom.commands.add("atom-workspace", "pulsar-git-plus:copy", {
         hiddenInCommandPalette: true,
         didDispatch: (event: CommandEvent) => {
           if (
             event.target &&
-            (event.target as HTMLElement).contains(document.querySelector(".git-plus.output"))
+            (event.target as HTMLElement).contains(document.querySelector(".pulsar-git-plus.output"))
           ) {
             atom.clipboard.write(window.getSelection().toString());
           } else event.abortKeyBinding();
         }
       })
     );
-    atom.keymaps.add("git-plus", {
+    atom.keymaps.add("pulsar-git-plus", {
       ".platform-darwin atom-workspace": {
-        "cmd-c": "git-plus:copy"
+        "cmd-c": "pulsar-git-plus:copy"
       },
       ".platform-win32 atom-workspace, .platform-linux atom-workspace": {
-        "ctrl-c": "git-plus:copy"
+        "ctrl-c": "pulsar-git-plus:copy"
       }
     });
   }
@@ -65,7 +65,7 @@ export class Root extends React.Component<Props, State> {
 
   componentWillUnmount() {
     this.subscriptions.dispose();
-    atom.keymaps["removeBindingsFromSource"]("git-plus");
+    atom.keymaps["removeBindingsFromSource"]("pulsar-git-plus");
   }
 
   render() {

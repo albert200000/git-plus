@@ -1,7 +1,7 @@
 import { Disposable } from "atom";
 import * as React from "react";
 
-const CONFIG_KEY = "git-plus";
+const CONFIG_KEY = "pulsar-git-plus";
 
 export interface WithConfigsProps {
   configs: {};

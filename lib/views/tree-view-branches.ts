@@ -11,7 +11,7 @@ export class TreeViewBranchManager {
   constructor(treeView: Services.TreeView) {
     this.treeView = treeView;
 
-    atom.config.observe("git-plus.general.showBranchInTreeView", (isEnabled: boolean) => {
+    atom.config.observe("pulsar-git-plus.general.showBranchInTreeView", (isEnabled: boolean) => {
       this.isEnabled = isEnabled;
       if (isEnabled) {
         this.initialize();

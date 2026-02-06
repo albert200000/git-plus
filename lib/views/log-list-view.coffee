@@ -6,19 +6,19 @@ emoji = require 'node-emoji'
 git = require '../git'
 GitShow = require '../models/git-show'
 
-numberOfCommitsToShow = -> atom.config.get('git-plus.logs.numberOfCommitsToShow')
+numberOfCommitsToShow = -> atom.config.get('pulsar-git-plus.logs.numberOfCommitsToShow')
 
 module.exports =
 class LogListView extends View
   @content: ->
-    @div class: 'git-plus-log', tabindex: -1, =>
-      @table id: 'git-plus-commits', outlet: 'commitsListView'
+    @div class: 'pulsar-git-plus-log', tabindex: -1, =>
+      @table id: 'pulsar-git-plus-commits', outlet: 'commitsListView'
       @div class: 'show-more', =>
         @a id: 'show-more', 'Show More'
 
-  getURI: -> 'atom://git-plus:log'
+  getURI: -> 'atom://pulsar-git-plus:log'
 
-  getTitle: -> 'git-plus: Log'
+  getTitle: -> 'pulsar-git-plus: Log'
 
   initialize: ->
     @skipCommits = 0

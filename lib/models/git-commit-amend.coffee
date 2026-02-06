@@ -96,12 +96,12 @@ prepFile = ({commentChar, message, prevChangedFiles, status, filePath}) ->
 showFile = (filePath) ->
   commitEditor = atom.workspace.paneForURI(filePath)?.itemForURI(filePath)
   if not commitEditor
-    if atom.config.get('git-plus.general.openInPane')
-      splitDirection = atom.config.get('git-plus.general.splitPane')
+    if atom.config.get('pulsar-git-plus.general.openInPane')
+      splitDirection = atom.config.get('pulsar-git-plus.general.splitPane')
       atom.workspace.getCenter().getActivePane()["split#{splitDirection}"]()
     atom.workspace.open filePath
   else
-    if atom.config.get('git-plus.general.openInPane')
+    if atom.config.get('pulsar-git-plus.general.openInPane')
       atom.workspace.paneForURI(filePath).activate()
     else
       atom.workspace.paneForURI(filePath).activateItemForURI(filePath)

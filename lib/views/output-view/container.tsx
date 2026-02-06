@@ -4,14 +4,14 @@ import * as ReactDOM from "react-dom";
 import { Root } from "./Root";
 
 export class OutputViewContainer {
-  static URI = "git-plus://output-view";
+  static URI = "pulsar-git-plus://output-view";
 
   element: HTMLElement;
   private emitter = new Emitter();
 
   constructor() {
     this.element = document.createElement("div");
-    this.element.classList.add("git-plus", "output");
+    this.element.classList.add("pulsar-git-plus", "output");
     this.render();
     atom.workspace.open(this, { activatePane: false });
   }
@@ -30,7 +30,7 @@ export class OutputViewContainer {
 
   serialize() {
     return {
-      deserializer: "git-plus/output-view"
+      deserializer: "pulsar-git-plus/output-view"
     };
   }
 

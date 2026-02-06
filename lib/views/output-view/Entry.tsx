@@ -20,7 +20,7 @@ export class Entry extends React.Component<Props, State> {
     super(props);
     this.state = {
       collapsed:
-        atom.config.get("git-plus.general.alwaysOpenDockWithResult") && props.isLatest
+        atom.config.get("pulsar-git-plus.general.alwaysOpenDockWithResult") && props.isLatest
           ? false
           : true
     };

@@ -17,7 +17,7 @@ export default async (setUpstream: boolean = false) => {
       pushOptions.remote = remotes[0];
       pushOptions.branch = "HEAD";
     } else {
-      if (atom.config.get("git-plus.remoteInteractions.promptForBranch")) {
+      if (atom.config.get("pulsar-git-plus.remoteInteractions.promptForBranch")) {
         let chosenRemote;
         if (remotes.length === 1) chosenRemote = remotes[0];
         else chosenRemote = await new ListView(remotes).result;
@@ -34,10 +34,10 @@ export default async (setUpstream: boolean = false) => {
         pushOptions.branch = chosenBranch;
       }
 
-      if (atom.config.get("git-plus.remoteInteractions.pullBeforePush")) {
+      if (atom.config.get("pulsar-git-plus.remoteInteractions.pullBeforePush")) {
         const result = await repo.pull({
-          rebase: atom.config.get("git-plus.remoteInteractions.pullRebase") === true,
-          autostash: atom.config.get("git-plus.remoteInteractions.pullAutostash") === true,
+          rebase: atom.config.get("pulsar-git-plus.remoteInteractions.pullRebase") === true,
+          autostash: atom.config.get("pulsar-git-plus.remoteInteractions.pullAutostash") === true,
           remote: pushOptions.remote,
           branch: pushOptions.remote
         });

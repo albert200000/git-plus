@@ -6,7 +6,7 @@ describe "Git-Plus service", ->
   service = null
 
   beforeEach ->
-    atom.config.set('git-plus.experimental.customCommands', true)
+    atom.config.set('pulsar-git-plus.experimental.customCommands', true)
     service = require '../lib/service'
 
   describe "registerCommand", ->

@@ -42,7 +42,7 @@ class ListView extends SelectListView
       @li name
 
   pull: (remoteName) ->
-    if atom.config.get('git-plus.remoteInteractions.promptForBranch')
+    if atom.config.get('pulsar-git-plus.remoteInteractions.promptForBranch')
       git.cmd(['branch', '--no-color', '-r'], cwd: @repo.getWorkingDirectory())
       .then (data) =>
         new Promise (resolve, reject) =>
@@ -72,8 +72,8 @@ class ListView extends SelectListView
       @mode = 'fetch'
       @execute name, '--prune'
     else if @mode is 'push'
-      pullBeforePush = atom.config.get('git-plus.remoteInteractions.pullBeforePush')
-      @extraArgs = '--rebase' if pullBeforePush and atom.config.get('git-plus.remoteInteractions.pullRebase')
+      pullBeforePush = atom.config.get('pulsar-git-plus.remoteInteractions.pullBeforePush')
+      @extraArgs = '--rebase' if pullBeforePush and atom.config.get('pulsar-git-plus.remoteInteractions.pullRebase')
       if pullBeforePush
         @pull(name).then (branch) => @execute name, null, branch
       else
@@ -85,7 +85,7 @@ class ListView extends SelectListView
     @cancel()
 
   execute: (remote='', extraArgs='', branch) ->
-    if atom.config.get('git-plus.remoteInteractions.promptForBranch')
+    if atom.config.get('pulsar-git-plus.remoteInteractions.promptForBranch')
       if branch?
         args = [@mode]
         if extraArgs.length > 0

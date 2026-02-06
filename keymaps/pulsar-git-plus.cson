@@ -1,0 +1,33 @@
+# Keybindings require three things to be fully defined: A selector that is
+# matched against the focused element, the keystroke and the command to
+# execute.
+#
+# Below is a basic keybinding which registers on all platforms by applying to
+# the root workspace element.
+
+# For more detailed documentation see
+# https://atom.io/docs/latest/advanced/keymaps
+
+'.platform-darwin':
+  'cmd-shift-h': 'pulsar-git-plus:menu'
+  # 'cmd-shift-c': 'pulsar-git-plus:commit'
+  # 'cmd-shift-a s': 'pulsar-git-plus:status'
+  # 'cmd-shift-a q': 'pulsar-git-plus:add-and-commit-and-push'
+  # 'cmd-shift-a a': 'pulsar-git-plus:add-all-and-commit'
+  # 'cmd-shift-a p': 'pulsar-git-plus:add-all-commit-and-push'
+
+'.platform-win32, .platform-linux':
+  'ctrl-shift-h': 'pulsar-git-plus:menu'
+  # 'ctrl-shift-x': 'pulsar-git-plus:commit'
+  # 'ctrl-shift-a s': 'pulsar-git-plus:status'
+  # 'ctrl-shift-a q': 'pulsar-git-plus:add-and-commit-and-push'
+  # 'ctrl-shift-a a': 'pulsar-git-plus:add-all-and-commit'
+  # 'ctrl-shift-a p': 'pulsar-git-plus:add-all-commit-and-push'
+
+# '.platform-darwin atom-text-editor':
+#   'cmd-shift-a': 'pulsar-git-plus:add'
+#   'cmd-shift-a c': 'pulsar-git-plus:add-and-commit'
+#
+# '.platform-win32 atom-text-editor, .platform-linux atom-text-editor':
+#   'ctrl-shift-a': 'pulsar-git-plus:add'
+#   'ctrl-shift-a c': 'pulsar-git-plus:add-and-commit'

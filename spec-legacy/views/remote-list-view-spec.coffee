@@ -4,9 +4,9 @@ RemoteListView = require '../../lib/views/remote-list-view'
 options = {cwd: repo.getWorkingDirectory()}
 colorOptions = {color: true}
 remotes = "remote1\nremote2"
-pullBeforePush = 'git-plus.remoteInteractions.pullBeforePush'
-pullRebase = 'git-plus.remoteInteractions.pullRebase'
-promptForBranch = 'git-plus.remoteInteractions.promptForBranch'
+pullBeforePush = 'pulsar-git-plus.remoteInteractions.pullBeforePush'
+pullRebase = 'pulsar-git-plus.remoteInteractions.pullRebase'
+promptForBranch = 'pulsar-git-plus.remoteInteractions.promptForBranch'
 
 describe "RemoteListView", ->
   it "displays a list of remotes", ->

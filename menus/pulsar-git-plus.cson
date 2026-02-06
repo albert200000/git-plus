@@ -7,92 +7,92 @@
       'submenu': [
         {
           'label': 'Add'
-          'command': 'git-plus:add'
+          'command': 'pulsar-git-plus:add'
         },
         {
           'label': 'Add Modified'
-          'command': 'git-plus:add-modified'
+          'command': 'pulsar-git-plus:add-modified'
         },
         {
           'label': 'Add All'
-          'command': 'git-plus:add-all'
+          'command': 'pulsar-git-plus:add-all'
         },
         {
           'label': 'Checkout Current File'
-          'command': 'git-plus:checkout-current-file'
+          'command': 'pulsar-git-plus:checkout-current-file'
         },
         {
           'label': 'Commit'
-          'command': 'git-plus:commit'
+          'command': 'pulsar-git-plus:commit'
         },
         {
           'label': 'Diff'
-          'command': 'git-plus:diff'
+          'command': 'pulsar-git-plus:diff'
         },
         {
           'label': 'Diff Branches'
-          'command': 'git-plus:diff-branches'
+          'command': 'pulsar-git-plus:diff-branches'
         },
         {
           'label': 'Diff Branch Files'
-          'command': 'git-plus:diff-branch-files'
+          'command': 'pulsar-git-plus:diff-branch-files'
         },
         {
           'label': 'Difftool'
-          'command': 'git-plus:difftool'
+          'command': 'pulsar-git-plus:difftool'
         },
         {
           'label': 'Diff All'
-          'command': 'git-plus:diff-all'
+          'command': 'pulsar-git-plus:diff-all'
         },
         {
           'label': 'Add + Commit'
-          'command': 'git-plus:add-and-commit'
+          'command': 'pulsar-git-plus:add-and-commit'
         },
         {
           'label': 'Add + Commit + Push'
-          'command': 'git-plus:add-and-commit-and-push'
+          'command': 'pulsar-git-plus:add-and-commit-and-push'
         },
         {
           'label': 'Add All + Commit'
-          'command': 'git-plus:add-all-and-commit'
+          'command': 'pulsar-git-plus:add-all-and-commit'
         },
         {
           'label': 'Add All + Commit + Push'
-          'command': 'git-plus:add-all-commit-and-push'
+          'command': 'pulsar-git-plus:add-all-commit-and-push'
         },
         {
           'label': 'Push'
-          'command': 'git-plus:push'
+          'command': 'pulsar-git-plus:push'
         },
         {
           'label': 'Log'
-          'command': 'git-plus:log'
+          'command': 'pulsar-git-plus:log'
         },
         {
           'label': 'Merge'
           'submenu': [
             {
               'label': 'Normal Merge'
-              'command': 'git-plus:merge'
+              'command': 'pulsar-git-plus:merge'
             },
             {
               'label': 'Merge Remote'
-              'command': 'git-plus:merge-remote'
+              'command': 'pulsar-git-plus:merge-remote'
             },
             {
               'label': 'Merge without fast-forward'
-              'command': 'git-plus:merge-no-fast-forward'
+              'command': 'pulsar-git-plus:merge-no-fast-forward'
             }
           ]
         },
         {
           'label': 'Rebase'
-          'command': 'git-plus:rebase'
+          'command': 'pulsar-git-plus:rebase'
         },
         {
           'label': 'Run'
-          'command': 'git-plus:run'
+          'command': 'pulsar-git-plus:run'
         },
       ]
     ]
@@ -102,5 +102,5 @@
 'context-menu':
   '.status-bar .git-branch': [
     label: "New Branch"
-    command: 'git-plus:new-branch'
+    command: 'pulsar-git-plus:new-branch'
   ]

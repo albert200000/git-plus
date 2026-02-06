@@ -11,8 +11,8 @@ RevisionView = require './git-revision-view'
 disposables = new CompositeDisposable
 
 showFile = (filePath) ->
-  if atom.config.get('git-plus.general.openInPane')
-    splitDirection = atom.config.get('git-plus.general.splitPane')
+  if atom.config.get('pulsar-git-plus.general.openInPane')
+    splitDirection = atom.config.get('pulsar-git-plus.general.splitPane')
     atom.workspace.getCenter().getActivePane()["split#{splitDirection}"]()
   atom.workspace.open(filePath)
 

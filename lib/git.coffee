@@ -48,7 +48,7 @@ module.exports = git =
       output = ''
       args = ['-c', 'color.ui=always'].concat(args) if color
       process = new BufferedProcess
-        command: atom.config.get('git-plus.general.gitPath') ? 'git'
+        command: atom.config.get('pulsar-git-plus.general.gitPath') ? 'git'
         args: args
         options: options
         stdout: (data) -> output += data.toString()

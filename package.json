@@ -1,5 +1,5 @@
 {
-  "name": "git-plus",
+  "name": "pulsar-git-plus",
   "main": "./lib/git-plus",
   "version": "8.7.1",
   "description": "Do git things without the terminal",
@@ -7,7 +7,7 @@
     "git"
   ],
   "providedServices": {
-    "git-plus": {
+    "pulsar-git-plus": {
       "description": "Execute git commands",
       "versions": {
         "1.0.0": "provideService"
@@ -19,7 +19,7 @@
     "debug": "atom-transpiler-debug-tool"
   },
   "deserializers": {
-    "git-plus/output-view": "deserializeOutputView"
+    "pulsar-git-plus/output-view": "deserializeOutputView"
   },
   "consumedServices": {
     "status-bar": {
@@ -38,7 +38,7 @@
       }
     }
   },
-  "repository": "https://github.com/akonwi/git-plus",
+  "repository": "https://github.com/albert200000/git-plus",
   "license": "MIT",
   "engines": {
     "atom": ">= 1.28"

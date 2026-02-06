@@ -1,10 +1,10 @@
-# Git-Plus package ![Build Status](https://travis-ci.org/akonwi/git-plus.svg?branch=master)
+# Git-Plus package
 
 [![forthebadge](http://forthebadge.com/images/badges/uses-git.svg)](http://forthebadge.com)
 
 vim-fugitive like package for atom. make commits and other git things without the terminal
 
-![A screenshot of your spankin' package](https://raw.githubusercontent.com/akonwi/git-plus/master/commit.gif)
+![A screenshot of your spankin' package](https://raw.githubusercontent.com/albert200000/git-plus/master/commit.gif)
 
 ## Usage
 
@@ -14,7 +14,7 @@ Make sure your gitconfig file is configured. You must configure at least the `us
 
 Also, the package currently favors an ssh setup that doesn't expect to be prompted for credentials in order to push/pull, .etc. Github has a guide to help you set that up [here](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/)
 
-If you are on a Windows machine, I recommend checking out [this thread](https://github.com/akonwi/git-plus/issues/224) if you have issues pushing/pulling from a remote repository with this package. I also don't have the means to do my own user testing in a windows environment so I won't be immediately able to help troubleshoot windows problems.
+If you are on a Windows machine, I recommend checking out [this thread](https://github.com/albert200000/git-plus/issues/224) if you have issues pushing/pulling from a remote repository with this package. I also don't have the means to do my own user testing in a windows environment so I won't be immediately able to help troubleshoot windows problems.
 
 ### Showing the Git-Plus Palette
 
@@ -37,9 +37,9 @@ Keeps your local repo bang up to date by automatically fetching from all remotes
 
 _Commands are accessible for keybindings by dasherizing the command title. Add your own keybindings in your ~/.atom/keymap.cson file_
 
-> Git Add == `git-plus:add`
+> Git Add == `pulsar-git-plus:add`
 
-> Git Add All Commit And Push == `git-plus:add-all-commit-and-push`
+> Git Add All Commit And Push == `pulsar-git-plus:add-all-commit-and-push`
 
 **Note: The following list of commands is not exhaustive. If what you want isn't a feature, you can use `Git Run` and enter the command.**
 
@@ -93,7 +93,7 @@ If you would like to use experimental features, enable them in the package setti
   ```coffeescript
   # In init.coffee
   atom.packages.onDidActivateInitialPackages () ->
-  if gitPlus = atom.packages.getActivePackage('git-plus')?.mainModule.provideService()
+  if gitPlus = atom.packages.getActivePackage('pulsar-git-plus')?.mainModule.provideService()
     gitPlus.registerCommand 'atom-text-editor', 'custom-git-commands:undo-last-commit', ->
       gitPlus.getRepo() # If there are multiple repos in the project, you will be prompted to select which to use
       .then (repo) -> gitPlus.run repo, 'reset HEAD~1'
@@ -103,7 +103,7 @@ If you would like to use experimental features, enable them in the package setti
 
   > _Please beware of giving your commands the same name(undo-last-commit) as existing commands. They will appear as duplicates in the Git-plus palette._
 
-  > Check out some commands [here](https://github.com/akonwi/git-plus/wiki/Custom-Commands-Snippets)
+  > Check out some commands [here](https://github.com/albert200000/git-plus/wiki/Custom-Commands-Snippets)
 
 - Stage Files Beta
   > When enabled, the 'Unstage Files' and 'Stage Files' commands will be merged into one view where the staged status of multiple files can be toggled.

@@ -10,25 +10,25 @@ selector =
   Win32LinuxEditor:   '.platform-win32 atom-text-editor, .platform-linux atom-text-editor'
 
 DarwinKeyMap =
-  'cmd-shift-h':      'git-plus:menu'
-  'cmd-shift-a s':    'git-plus:status'
-  'cmd-shift-a q':    'git-plus:add-and-commit-and-push'
+  'cmd-shift-h':      'pulsar-git-plus:menu'
+  'cmd-shift-a s':    'pulsar-git-plus:status'
+  'cmd-shift-a q':    'pulsar-git-plus:add-and-commit-and-push'
 
 Win32LinuxKeyMap =
-  'ctrl-shift-h':     'git-plus:menu'
-  'ctrl-shift-x':     'git-plus:commit'
-  'ctrl-shift-a s':   'git-plus:status'
-  'ctrl-shift-a q':   'git-plus:add-and-commit-and-push'
-  'ctrl-shift-a a':   'git-plus:add-all-and-commit'
-  'ctrl-shift-a p':   'git-plus:add-all-commit-and-push'
+  'ctrl-shift-h':     'pulsar-git-plus:menu'
+  'ctrl-shift-x':     'pulsar-git-plus:commit'
+  'ctrl-shift-a s':   'pulsar-git-plus:status'
+  'ctrl-shift-a q':   'pulsar-git-plus:add-and-commit-and-push'
+  'ctrl-shift-a a':   'pulsar-git-plus:add-all-and-commit'
+  'ctrl-shift-a p':   'pulsar-git-plus:add-all-commit-and-push'
 
 DarwinEditorKeyMap =
-  'cmd-shift-a':      'git-plus:add'
-  'cmd-shift-a c':    'git-plus:add-and-commit'
+  'cmd-shift-a':      'pulsar-git-plus:add'
+  'cmd-shift-a c':    'pulsar-git-plus:add-and-commit'
 
 Win32LinuxEditorKeyMap =
-  'ctrl-shift-a':     'git-plus:add'
-  'ctrl-shift-a c':   'git-plus:add-and-commit'
+  'ctrl-shift-a':     'pulsar-git-plus:add'
+  'ctrl-shift-a c':   'pulsar-git-plus:add-and-commit'
 
 getCommandsFromKeymap = (keymap) ->
   commands = []

@@ -15,21 +15,21 @@ openPromise =
 
 describe "GitDiff", ->
   beforeEach ->
-    atom.config.set 'git-plus.diffs.includeStagedDiff', true
+    atom.config.set 'pulsar-git-plus.diffs.includeStagedDiff', true
     spyOn(atom.workspace, 'getActiveTextEditor').andReturn textEditor
     spyOn(atom.workspace, 'open').andReturn Promise.resolve textEditor
     spyOn(git, 'cmd').andReturn Promise.resolve('diffs')
     waitsForPromise ->
       GitDiff repo, file: pathToRepoFile
 
-  describe "when git-plus.diffs.includeStagedDiff config is true", ->
+  describe "when pulsar-git-plus.diffs.includeStagedDiff config is true", ->
     it "calls git.cmd and specifies 'HEAD'", ->
       expect('HEAD' in git.cmd.mostRecentCall.args[0]).toBe true
 
-describe "GitDiff when git-plus.diffs.wordDiff config is true", ->
+describe "GitDiff when pulsar-git-plus.diffs.wordDiff config is true", ->
   beforeEach ->
-    atom.config.set 'git-plus.diffs.wordDiff', true
-    atom.config.set 'git-plus.diffs.includeStagedDiff', true
+    atom.config.set 'pulsar-git-plus.diffs.wordDiff', true
+    atom.config.set 'pulsar-git-plus.diffs.includeStagedDiff', true
     spyOn(atom.workspace, 'getActiveTextEditor').andReturn textEditor
     spyOn(atom.workspace, 'open').andReturn Promise.resolve textEditor
     spyOn(git, 'cmd').andReturn Promise.resolve('diffs')
@@ -41,7 +41,7 @@ describe "GitDiff when git-plus.diffs.wordDiff config is true", ->
 
 describe "GitDiff when a file is not specified", ->
   beforeEach ->
-    atom.config.set 'git-plus.diffs.includeStagedDiff', true
+    atom.config.set 'pulsar-git-plus.diffs.includeStagedDiff', true
     spyOn(atom.workspace, 'getActiveTextEditor').andReturn textEditor
     spyOn(atom.workspace, 'open').andReturn Promise.resolve textEditor
     spyOn(git, 'cmd').andReturn Promise.resolve('diffs')
@@ -53,7 +53,7 @@ describe "GitDiff when a file is not specified", ->
 
 describe "when the useSplitDiff config is set to true", ->
   it "calls RevisionView.showRevision", ->
-    atom.config.set('git-plus.diffs.useSplitDiff', true)
+    atom.config.set('pulsar-git-plus.diffs.useSplitDiff', true)
     spyOn(atom.workspace, 'open').andReturn Promise.resolve textEditor
     spyOn(RevisionView, 'showRevision')
     GitDiff(repo, file: pathToRepoFile)
@@ -62,23 +62,23 @@ describe "when the useSplitDiff config is set to true", ->
       expect(atom.workspace.open).toHaveBeenCalled()
       expect(RevisionView.showRevision).toHaveBeenCalledWith repo, textEditor, repo.branch
 
-# describe "when git-plus.general.openInPane config is true", ->
+# describe "when pulsar-git-plus.general.openInPane config is true", ->
 #   beforeEach ->
-#     atom.config.set 'git-plus.general.openInPane', true
+#     atom.config.set 'pulsar-git-plus.general.openInPane', true
 #     spyOn(atom.workspace, 'getActivePane').andReturn currentPane
 #     spyOn(atom.workspace, 'open').andReturn textEditor
 #     spyOn(currentPane, 'splitRight').andReturn currentPane
 #     waitsForPromise ->
 #       GitDiff repo, file: '.'
 #
-#   describe "when git-plus.general.splitPane config is not set", ->
+#   describe "when pulsar-git-plus.general.splitPane config is not set", ->
 #     it "defaults to splitRight", ->
 #       expect(currentPane.splitRight).toHaveBeenCalled()
 #       expect(atom.workspace.getActivePane).toHaveBeenCalled()
 
 describe "GitDiffAll", ->
   beforeEach ->
-    atom.config.set 'git-plus.diffs.includeStagedDiff', true
+    atom.config.set 'pulsar-git-plus.diffs.includeStagedDiff', true
     spyOn(atom.workspace, 'getActiveTextEditor').andReturn textEditor
     spyOn(atom.workspace, 'open').andReturn Promise.resolve textEditor
     spyOn(fs, 'writeFile').andCallFake -> fs.writeFile.mostRecentCall.args[3]()

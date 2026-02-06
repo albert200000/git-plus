@@ -7,8 +7,8 @@ BranchListView = require '../views/branch-list-view'
 nothingToShow = 'Nothing to show.'
 
 showFile = (filePath) ->
-  if atom.config.get('git-plus.general.openInPane')
-    splitDirection = atom.config.get('git-plus.general.splitPane')
+  if atom.config.get('pulsar-git-plus.general.openInPane')
+    splitDirection = atom.config.get('pulsar-git-plus.general.splitPane')
     atom.workspace.getCenter().getActivePane()["split#{splitDirection}"]()
   atom.workspace.open(filePath)
 
@@ -31,7 +31,7 @@ module.exports = (repo) ->
       diffStat = data
       diffFilePath = Path.join(repo.getPath(), "atom_git_plus.diff")
       args = ['diff', '--color=never', repo.branch, name]
-      args.push '--word-diff' if atom.config.get 'git-plus.diffs.wordDiff'
+      args.push '--word-diff' if atom.config.get 'pulsar-git-plus.diffs.wordDiff'
       git.cmd(args, cwd: repo.getWorkingDirectory())
       .then (data) -> prepFile((diffStat ? '') + data, diffFilePath)
       .then -> showFile diffFilePath

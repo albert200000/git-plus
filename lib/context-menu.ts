@@ -14,13 +14,13 @@ export function initializeContextMenu() {
       {
         label: "Git",
         submenu: [
-          { label: "Add", command: "git-plus-context:add" },
-          { label: "Add + Commit", command: "git-plus-context:add-and-commit" },
-          { label: "Checkout", command: "git-plus-context:checkout-file" },
-          { label: "Difftool", command: "git-plus-context:difftool" },
+          { label: "Add", command: "pulsar-git-plus-context:add" },
+          { label: "Add + Commit", command: "pulsar-git-plus-context:add-and-commit" },
+          { label: "Checkout", command: "pulsar-git-plus-context:checkout-file" },
+          { label: "Difftool", command: "pulsar-git-plus-context:difftool" },
           {
             label: "Unstage",
-            command: "git-plus-context:unstage-file"
+            command: "pulsar-git-plus-context:unstage-file"
           }
         ]
       },
@@ -31,7 +31,7 @@ export function initializeContextMenu() {
       { type: "separator" },
       {
         label: "Git",
-        submenu: [{ label: "Diff", command: "git-plus-context:diff" }]
+        submenu: [{ label: "Diff", command: "pulsar-git-plus-context:diff" }]
       },
       { type: "separator" }
     ],
@@ -40,7 +40,7 @@ export function initializeContextMenu() {
       { type: "separator" },
       {
         label: "Git",
-        submenu: [{ label: "Diff Against Branch", command: "git-plus-context:diff-branch-files" }]
+        submenu: [{ label: "Diff Against Branch", command: "pulsar-git-plus-context:diff-branch-files" }]
       },
       { type: "separator" }
     ],
@@ -49,10 +49,10 @@ export function initializeContextMenu() {
       {
         label: "Git",
         submenu: [
-          { label: "Add", command: "git-plus-context:add" },
+          { label: "Add", command: "pulsar-git-plus-context:add" },
           {
             label: "Unstage",
-            command: "git-plus-context:unstage-file"
+            command: "pulsar-git-plus-context:unstage-file"
           }
         ]
       },
@@ -65,10 +65,10 @@ export function initializeContextMenu() {
       {
         label: "Git",
         submenu: [
-          { label: "Diff", command: "git-plus-context:diff-all" },
+          { label: "Diff", command: "pulsar-git-plus-context:diff-all" },
           {
             label: "Diff Branches",
-            command: "git-plus-context:diff-branches"
+            command: "pulsar-git-plus-context:diff-branches"
           }
         ]
       },
@@ -79,9 +79,9 @@ export function initializeContextMenu() {
       {
         label: "Git",
         submenu: [
-          { label: "Add", command: "git-plus-context:add" },
-          { label: "Pull", command: "git-plus-context:pull" },
-          { label: "Push", command: "git-plus-context:push" }
+          { label: "Add", command: "pulsar-git-plus-context:add" },
+          { label: "Pull", command: "pulsar-git-plus-context:pull" },
+          { label: "Push", command: "pulsar-git-plus-context:push" }
         ]
       },
       { type: "separator" }

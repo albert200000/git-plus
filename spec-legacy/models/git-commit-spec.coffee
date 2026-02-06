@@ -114,7 +114,7 @@ describe "GitCommit", ->
 
   describe "when the verbose commit setting is true", ->
     beforeEach ->
-      atom.config.set "git-plus.commits.verboseCommits", true
+      atom.config.set "pulsar-git-plus.commits.verboseCommits", true
       fs.writeFileSync file, Math.random()
       waitsForPromise -> git.cmd(['add', file], cwd: workingDirectory)
       waitsForPromise -> GitCommit(repo)
@@ -126,10 +126,10 @@ describe "GitCommit", ->
         .then (diff) ->
           expect(editor.getText()).toContain diff
 
-  describe "when the `git-plus.general.openInPane` setting is true", ->
+  describe "when the `pulsar-git-plus.general.openInPane` setting is true", ->
     beforeEach ->
-      atom.config.set 'git-plus.general.openInPane', true
-      atom.config.set 'git-plus.general.splitPane', 'Right'
+      atom.config.set 'pulsar-git-plus.general.openInPane', true
+      atom.config.set 'pulsar-git-plus.general.splitPane', 'Right'
       fs.writeFileSync file, Math.random()
       waitsForPromise -> git.cmd(['add', file], cwd: workingDirectory)
       waitsForPromise -> GitCommit(repo)

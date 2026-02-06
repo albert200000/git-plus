@@ -12,11 +12,11 @@ export default async () => {
   if (remotes.length === 0) {
     atom.notifications.addInfo("There is no remote repository to pull from.");
   } else {
-    const shouldRebase = atom.config.get("git-plus.remoteInteractions.pullRebase") === true;
-    const shouldAutostash = atom.config.get("git-plus.remoteInteractions.pullAutostash") === true;
+    const shouldRebase = atom.config.get("pulsar-git-plus.remoteInteractions.pullRebase") === true;
+    const shouldAutostash = atom.config.get("pulsar-git-plus.remoteInteractions.pullAutostash") === true;
     const pullOptions: PullOptions = { rebase: shouldRebase, autostash: shouldAutostash };
 
-    if (atom.config.get("git-plus.remoteInteractions.promptForBranch") === true) {
+    if (atom.config.get("pulsar-git-plus.remoteInteractions.promptForBranch") === true) {
       let chosenRemote;
       if (remotes.length === 1) chosenRemote = remotes[0];
       else chosenRemote = await new ListView(remotes).result;
