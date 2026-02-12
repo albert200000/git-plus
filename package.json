@@ -53,14 +53,12 @@
     "atom-select-list": "^0.8.1",
     "atom-space-pen-views": "^2.2.0",
     "classnames": "^2.5.1",
-    "cross-env": "7.0.3",
     "fs-plus": "^2.10.1",
     "fuzzaldrin": "^2.1.0",
     "linkify-urls": "^2.2.0",
     "node-emoji": "^1.11.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
-    "typescript": "^5.9.3",
     "underscore-plus": "^1.7.0"
   },
   "devDependencies": {
@@ -73,6 +71,7 @@
     "@types/react": "^16.14.0",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.54.0",
+    "cross-env": "7.0.3",
     "coffeescript": "^2.7.0",
     "eslint": "^9.39.2",
     "eslint-plugin-jasmine": "^4.2.2",
@@ -80,21 +79,7 @@
     "lint": "^1.1.2",
     "parcel": "^2.16.4",
     "prettier": "^2.3.2",
+    "typescript": "^5.9.3",
     "quibble": "^0.3.0"
-  },
-  "targets": {
-    "bundle": {
-      "context": "electron-renderer",
-      "engines": {
-        "electron": ">=12.x"
-      },
-      "includeNodeModules": {
-        "atom": false,
-        "electron": false,
-        "typescript": false
-      },
-      "outputFormat": "commonjs",
-      "isLibrary": true
-    }
   }
 }
