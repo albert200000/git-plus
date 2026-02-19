@@ -7,7 +7,7 @@ module.exports = (repo, {diffStat, file}={}) ->
   if not file
     return notifier.addError "No open file. Select 'Diff All'."
 
-  stagingStatus = git.getStagingStatus(repo, file)
+  stagingStatus = await git.getStagingStatus(repo, file)
 
   atom.workspace.open(
     "atom-github://file-patch/#{encodeURIComponent(file)}?workdir=#{encodeURIComponent(repo.getWorkingDirectory())}&stagingStatus=#{encodeURIComponent(stagingStatus)}"

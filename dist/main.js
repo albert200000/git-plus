@@ -3398,11 +3398,11 @@ parcelRegister("7c2RU", function(module, exports) {
     var git, notifier;
     git = (parcelRequire("lppKC"));
     notifier = (parcelRequire("gSFWX"));
-    module.exports = function(repo, { diffStat: diffStat, file: file } = {}) {
+    module.exports = async function(repo, { diffStat: diffStat, file: file } = {}) {
         var ref, stagingStatus;
         if (file == null) file = repo.relativize((ref = atom.workspace.getActiveTextEditor()) != null ? ref.getPath() : void 0);
         if (!file) return notifier.addError("No open file. Select 'Diff All'.");
-        stagingStatus = git.getStagingStatus(repo, file);
+        stagingStatus = await git.getStagingStatus(repo, file);
         return atom.workspace.open(`atom-github://file-patch/${encodeURIComponent(file)}?workdir=${encodeURIComponent(repo.getWorkingDirectory())}&stagingStatus=${encodeURIComponent(stagingStatus)}`);
     };
 }).call(module.exports);
