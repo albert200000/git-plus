@@ -8,20 +8,7 @@ notifier = require '../notifier'
 {$} = require "atom-space-pen-views"
 
 disposables = new CompositeDisposable
-SplitDiff = null
 SyncScroll = null
-
-splitDiff = (editor, newTextEditor) ->
-  editors =
-    editor1: newTextEditor    # the older revision
-    editor2: editor           # current rev
-  SplitDiff._setConfig 'diffWords', true
-  SplitDiff._setConfig 'ignoreWhitespace', true
-  SplitDiff._setConfig 'syncHorizontalScroll', true
-  SplitDiff.diffPanes()
-  SplitDiff.updateDiff(editors)
-  syncScroll = new SyncScroll(editors.editor1, editors.editor2, true)
-  syncScroll.syncPositions()
 
 updateNewTextEditor = (newTextEditor, editor, gitRevision, fileContents) ->
   _.delay ->
@@ -30,7 +17,6 @@ updateNewTextEditor = (newTextEditor, editor, gitRevision, fileContents) ->
     newTextEditor.buffer.setPreferredLineEnding(lineEnding)
     newTextEditor.setText(fileContents)
     newTextEditor.buffer.cachedDiskContents = fileContents
-    splitDiff(editor, newTextEditor)
   , 300
 
 showRevision = (repo, filePath, editor, gitRevision, fileContents, options={}) ->
@@ -54,17 +40,7 @@ showRevision = (repo, filePath, editor, gitRevision, fileContents, options={}) -
 
 module.exports =
   showRevision: (repo, editor, gitRevision) ->
-    if not SplitDiff
-      try
-        SplitDiff = require atom.packages.resolvePackagePath('split-diff')
-        SyncScroll = require atom.packages.resolvePackagePath('split-diff') + '/lib/sync-scroll'
-        atom.themes.requireStylesheet(atom.packages.resolvePackagePath('split-diff') + '/styles/split-diff')
-      catch error
-        return notifier.addInfo("Could not load 'split-diff' package to open diff view. Please install it `apm install split-diff`.")
-
     options = {diff: false}
-
-    SplitDiff.disable(false)
 
     filePath = editor.getPath()
     fileName = path.basename(filePath)

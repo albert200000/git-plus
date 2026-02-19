@@ -3380,7 +3380,7 @@ parcelRegister("7c2RU", function(module, exports) {
 
 
 (function() {
-    var CompositeDisposable, Os, Path, RevisionView, disposables, fs, git, nothingToShow, notifier, prepFile, showFile, splitDiff;
+    var CompositeDisposable, Os, Path, RevisionView, disposables, fs, git, nothingToShow, notifier, prepFile, showFile;
     ({ CompositeDisposable: CompositeDisposable } = $dp3SY$atom);
     Os = $dp3SY$os;
     Path = $dp3SY$path;
@@ -3409,45 +3409,32 @@ parcelRegister("7c2RU", function(module, exports) {
             });
         });
     };
-    splitDiff = function(repo, pathToFile) {
-        return atom.workspace.open(Path.join(repo.getWorkingDirectory(), pathToFile), {
-            split: 'left',
-            activatePane: false,
-            activateItem: true,
-            searchAllPanes: false
-        }).then(function(editor) {
-            return RevisionView.showRevision(repo, editor, repo.branch);
-        });
-    };
     module.exports = function(repo, { diffStat: diffStat, file: file } = {}) {
         var args, diffFilePath, ref;
         if (file == null) file = repo.relativize((ref = atom.workspace.getActiveTextEditor()) != null ? ref.getPath() : void 0);
-        if (file && file !== '.' && atom.config.get('pulsar-git-plus.diffs.useSplitDiff')) return splitDiff(repo, file);
-        else {
-            diffFilePath = Path.join(repo.getPath(), "atom_git_plus.diff");
-            if (!file) return notifier.addError("No open file. Select 'Diff All'.");
-            args = [
-                'diff',
-                '--color=never'
-            ];
-            if (atom.config.get('pulsar-git-plus.diffs.includeStagedDiff')) args.push('HEAD');
-            if (atom.config.get('pulsar-git-plus.diffs.wordDiff')) args.push('--word-diff');
-            if (!diffStat) args.push(file);
-            return git.cmd(args, {
-                cwd: repo.getWorkingDirectory()
-            }).then(function(data) {
-                return prepFile((diffStat != null ? diffStat : '') + data, diffFilePath);
-            }).then(function() {
-                return showFile(diffFilePath);
-            }).then(function(textEditor) {
-                return disposables.add(textEditor.onDidDestroy(function() {
-                    return fs.unlink(diffFilePath);
-                }));
-            }).catch(function(err) {
-                if (err === nothingToShow) return notifier.addInfo(err);
-                else return notifier.addError(err);
-            });
-        }
+        diffFilePath = Path.join(repo.getPath(), "atom_git_plus.diff");
+        if (!file) return notifier.addError("No open file. Select 'Diff All'.");
+        args = [
+            'diff',
+            '--color=never'
+        ];
+        if (atom.config.get('pulsar-git-plus.diffs.includeStagedDiff')) args.push('HEAD');
+        if (atom.config.get('pulsar-git-plus.diffs.wordDiff')) args.push('--word-diff');
+        if (!diffStat) args.push(file);
+        return git.cmd(args, {
+            cwd: repo.getWorkingDirectory()
+        }).then(function(data) {
+            return prepFile((diffStat != null ? diffStat : '') + data, diffFilePath);
+        }).then(function() {
+            return showFile(diffFilePath);
+        }).then(function(textEditor) {
+            return disposables.add(textEditor.onDidDestroy(function() {
+                return fs.unlink(diffFilePath);
+            }));
+        }).catch(function(err) {
+            if (err === nothingToShow) return notifier.addInfo(err);
+            else return notifier.addError(err);
+        });
     };
 }).call(module.exports);
 
@@ -3461,7 +3448,7 @@ parcelRegister("eZTKA", function(module, exports) {
 
 
 (function() {
-    var $, BufferedProcess, CompositeDisposable, SplitDiff, SyncScroll, _, disposables, fs, git, notifier, path, showRevision, splitDiff, updateNewTextEditor;
+    var $, BufferedProcess, CompositeDisposable, SyncScroll, _, disposables, fs, git, notifier, path, showRevision, updateNewTextEditor;
     _ = $dp3SY$underscoreplus;
     path = $dp3SY$path;
     fs = $dp3SY$fs;
@@ -3470,22 +3457,7 @@ parcelRegister("eZTKA", function(module, exports) {
     ({ CompositeDisposable: CompositeDisposable, BufferedProcess: BufferedProcess } = $dp3SY$atom);
     ({ $: $ } = $dp3SY$atomspacepenviews);
     disposables = new CompositeDisposable();
-    SplitDiff = null;
     SyncScroll = null;
-    splitDiff = function(editor, newTextEditor) {
-        var editors, syncScroll;
-        editors = {
-            editor1: newTextEditor,
-            editor2: editor // current rev
-        };
-        SplitDiff._setConfig('diffWords', true);
-        SplitDiff._setConfig('ignoreWhitespace', true);
-        SplitDiff._setConfig('syncHorizontalScroll', true);
-        SplitDiff.diffPanes();
-        SplitDiff.updateDiff(editors);
-        syncScroll = new SyncScroll(editors.editor1, editors.editor2, true);
-        return syncScroll.syncPositions();
-    };
     updateNewTextEditor = function(newTextEditor, editor, gitRevision, fileContents) {
         return _.delay(function() {
             var lineEnding, ref;
@@ -3493,8 +3465,7 @@ parcelRegister("eZTKA", function(module, exports) {
             fileContents = fileContents.replace(/(\r\n|\n)/g, lineEnding);
             newTextEditor.buffer.setPreferredLineEnding(lineEnding);
             newTextEditor.setText(fileContents);
-            newTextEditor.buffer.cachedDiskContents = fileContents;
-            return splitDiff(editor, newTextEditor);
+            return newTextEditor.buffer.cachedDiskContents = fileContents;
         }, 300);
     };
     showRevision = function(repo, filePath, editor, gitRevision, fileContents, options = {}) {
@@ -3525,19 +3496,10 @@ parcelRegister("eZTKA", function(module, exports) {
     };
     module.exports = {
         showRevision: function(repo, editor, gitRevision) {
-            var args, error, fileName, filePath, options;
-            if (!SplitDiff) try {
-                SplitDiff = require(atom.packages.resolvePackagePath('split-diff'));
-                SyncScroll = require(atom.packages.resolvePackagePath('split-diff') + '/lib/sync-scroll');
-                atom.themes.requireStylesheet(atom.packages.resolvePackagePath('split-diff') + '/styles/split-diff');
-            } catch (error1) {
-                error = error1;
-                return notifier.addInfo("Could not load 'split-diff' package to open diff view. Please install it `apm install split-diff`.");
-            }
+            var args, fileName, filePath, options;
             options = {
                 diff: false
             };
-            SplitDiff.disable(false);
             filePath = editor.getPath();
             fileName = path.basename(filePath);
             args = [
@@ -6492,13 +6454,6 @@ var $2f43d6d148a5e6a3$exports = {};
                     title: "Enable syntax highlighting in diffs?",
                     type: "boolean",
                     default: true
-                },
-                useSplitDiff: {
-                    order: 4,
-                    title: "Split diff",
-                    type: "boolean",
-                    default: false,
-                    description: "Use the split-diff package to show diffs for a single file. Only works with `Diff` command when a file is open."
                 }
             }
         },

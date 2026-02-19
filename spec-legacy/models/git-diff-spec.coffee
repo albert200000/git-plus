@@ -51,17 +51,6 @@ describe "GitDiff when a file is not specified", ->
   it "checks for the current open file", ->
     expect(atom.workspace.getActiveTextEditor).toHaveBeenCalled()
 
-describe "when the useSplitDiff config is set to true", ->
-  it "calls RevisionView.showRevision", ->
-    atom.config.set('pulsar-git-plus.diffs.useSplitDiff', true)
-    spyOn(atom.workspace, 'open').andReturn Promise.resolve textEditor
-    spyOn(RevisionView, 'showRevision')
-    GitDiff(repo, file: pathToRepoFile)
-    waitsFor -> RevisionView.showRevision.callCount > 0
-    runs ->
-      expect(atom.workspace.open).toHaveBeenCalled()
-      expect(RevisionView.showRevision).toHaveBeenCalledWith repo, textEditor, repo.branch
-
 # describe "when pulsar-git-plus.general.openInPane config is true", ->
 #   beforeEach ->
 #     atom.config.set 'pulsar-git-plus.general.openInPane', true

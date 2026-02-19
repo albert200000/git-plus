@@ -91,12 +91,6 @@ module.exports =
         title: "Enable syntax highlighting in diffs?"
         type: "boolean"
         default: true
-      useSplitDiff:
-        order: 4
-        title: "Split diff"
-        type: "boolean"
-        default: false
-        description: "Use the split-diff package to show diffs for a single file. Only works with `Diff` command when a file is open."
   logs:
     order: 4
     type: "object"

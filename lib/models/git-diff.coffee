@@ -25,33 +25,23 @@ prepFile = (text, filePath) ->
       fs.writeFile filePath, text, flag: 'w+', (err) ->
         if err then reject err else resolve true
 
-splitDiff = (repo, pathToFile) ->
-  atom.workspace.open(Path.join(repo.getWorkingDirectory(),pathToFile), {
-    split: 'left',
-    activatePane: false,
-    activateItem: true,
-    searchAllPanes: false
-  }).then (editor) -> RevisionView.showRevision(repo, editor, repo.branch)
-
 module.exports = (repo, {diffStat, file}={}) ->
   file ?= repo.relativize(atom.workspace.getActiveTextEditor()?.getPath())
-  if file and file isnt '.' and atom.config.get('pulsar-git-plus.diffs.useSplitDiff')
-    splitDiff(repo, file)
-  else
-    diffFilePath = Path.join(repo.getPath(), "atom_git_plus.diff")
-    if not file
-      return notifier.addError "No open file. Select 'Diff All'."
-    args = ['diff', '--color=never']
-    args.push 'HEAD' if atom.config.get 'pulsar-git-plus.diffs.includeStagedDiff'
-    args.push '--word-diff' if atom.config.get 'pulsar-git-plus.diffs.wordDiff'
-    args.push file unless diffStat
-    git.cmd(args, cwd: repo.getWorkingDirectory())
-    .then (data) -> prepFile((diffStat ? '') + data, diffFilePath)
-    .then -> showFile diffFilePath
-    .then (textEditor) ->
-      disposables.add textEditor.onDidDestroy -> fs.unlink diffFilePath
-    .catch (err) ->
-      if err is nothingToShow
-        notifier.addInfo err
-      else
-        notifier.addError err
+
+  diffFilePath = Path.join(repo.getPath(), "atom_git_plus.diff")
+  if not file
+    return notifier.addError "No open file. Select 'Diff All'."
+  args = ['diff', '--color=never']
+  args.push 'HEAD' if atom.config.get 'pulsar-git-plus.diffs.includeStagedDiff'
+  args.push '--word-diff' if atom.config.get 'pulsar-git-plus.diffs.wordDiff'
+  args.push file unless diffStat
+  git.cmd(args, cwd: repo.getWorkingDirectory())
+  .then (data) -> prepFile((diffStat ? '') + data, diffFilePath)
+  .then -> showFile diffFilePath
+  .then (textEditor) ->
+    disposables.add textEditor.onDidDestroy -> fs.unlink diffFilePath
+  .catch (err) ->
+    if err is nothingToShow
+      notifier.addInfo err
+    else
+      notifier.addError err
