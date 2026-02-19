@@ -441,6 +441,26 @@ parcelRegister("lppKC", function(module, exports) {
                 });
             });
         },
+        getStagingStatus: function(repo, filePath) {
+            return git.getRepo().then(function(repo) {
+                return git.stagedFiles(repo).then(function(stagedFiles) {
+                    return git.unstagedFiles(repo, {
+                        showUntracked: true
+                    }).then(function(unstagedFiles) {
+                        var staged, unstaged;
+                        staged = stagedFiles.some(function(file) {
+                            return file.path === filePath;
+                        });
+                        unstaged = unstagedFiles.some(function(file) {
+                            return file.path === filePath;
+                        });
+                        if (staged) return "staged";
+                        else if (unstaged) return "unstaged";
+                        else return "";
+                    });
+                });
+            });
+        },
         add: function(repo, { file: file, update: update } = {}) {
             var args, message, repoName;
             args = [
@@ -3374,151 +3394,20 @@ ${commentChar} ${status}`);
 parcelRegister("7c2RU", function(module, exports) {
 
 
-
-
-
-
-
 (function() {
-    var CompositeDisposable, Os, Path, RevisionView, disposables, fs, git, nothingToShow, notifier, prepFile, showFile;
-    ({ CompositeDisposable: CompositeDisposable } = $dp3SY$atom);
-    Os = $dp3SY$os;
-    Path = $dp3SY$path;
-    fs = $dp3SY$fsplus;
+    var git, notifier;
     git = (parcelRequire("lppKC"));
     notifier = (parcelRequire("gSFWX"));
-    RevisionView = (parcelRequire("eZTKA"));
-    nothingToShow = 'Nothing to show.';
-    disposables = new CompositeDisposable();
-    showFile = function(filePath) {
-        var splitDirection;
-        if (atom.config.get('pulsar-git-plus.general.openInPane')) {
-            splitDirection = atom.config.get('pulsar-git-plus.general.splitPane');
-            atom.workspace.getCenter().getActivePane()[`split${splitDirection}`]();
-        }
-        return atom.workspace.open(filePath);
-    };
-    prepFile = function(text, filePath) {
-        return new Promise(function(resolve, reject) {
-            if ((text != null ? text.length : void 0) === 0) return reject(nothingToShow);
-            else return fs.writeFile(filePath, text, {
-                flag: 'w+'
-            }, function(err) {
-                if (err) return reject(err);
-                else return resolve(true);
-            });
-        });
-    };
     module.exports = function(repo, { diffStat: diffStat, file: file } = {}) {
-        var args, diffFilePath, ref;
+        var ref, stagingStatus;
         if (file == null) file = repo.relativize((ref = atom.workspace.getActiveTextEditor()) != null ? ref.getPath() : void 0);
-        diffFilePath = Path.join(repo.getPath(), "atom_git_plus.diff");
         if (!file) return notifier.addError("No open file. Select 'Diff All'.");
-        args = [
-            'diff',
-            '--color=never'
-        ];
-        if (atom.config.get('pulsar-git-plus.diffs.includeStagedDiff')) args.push('HEAD');
-        if (atom.config.get('pulsar-git-plus.diffs.wordDiff')) args.push('--word-diff');
-        if (!diffStat) args.push(file);
-        return git.cmd(args, {
-            cwd: repo.getWorkingDirectory()
-        }).then(function(data) {
-            return prepFile((diffStat != null ? diffStat : '') + data, diffFilePath);
-        }).then(function() {
-            return showFile(diffFilePath);
-        }).then(function(textEditor) {
-            return disposables.add(textEditor.onDidDestroy(function() {
-                return fs.unlink(diffFilePath);
-            }));
-        }).catch(function(err) {
-            if (err === nothingToShow) return notifier.addInfo(err);
-            else return notifier.addError(err);
-        });
+        stagingStatus = git.getStagingStatus(repo, file);
+        return atom.workspace.open(`atom-github://file-patch/${encodeURIComponent(file)}?workdir=${encodeURIComponent(repo.getWorkingDirectory())}&stagingStatus=${encodeURIComponent(stagingStatus)}`);
     };
 }).call(module.exports);
 
 });
-parcelRegister("eZTKA", function(module, exports) {
-
-
-
-
-
-
-
-(function() {
-    var $, BufferedProcess, CompositeDisposable, SyncScroll, _, disposables, fs, git, notifier, path, showRevision, updateNewTextEditor;
-    _ = $dp3SY$underscoreplus;
-    path = $dp3SY$path;
-    fs = $dp3SY$fs;
-    git = (parcelRequire("lppKC"));
-    notifier = (parcelRequire("gSFWX"));
-    ({ CompositeDisposable: CompositeDisposable, BufferedProcess: BufferedProcess } = $dp3SY$atom);
-    ({ $: $ } = $dp3SY$atomspacepenviews);
-    disposables = new CompositeDisposable();
-    SyncScroll = null;
-    updateNewTextEditor = function(newTextEditor, editor, gitRevision, fileContents) {
-        return _.delay(function() {
-            var lineEnding, ref;
-            lineEnding = ((ref = editor.buffer) != null ? ref.lineEndingForRow(0) : void 0) || "\n";
-            fileContents = fileContents.replace(/(\r\n|\n)/g, lineEnding);
-            newTextEditor.buffer.setPreferredLineEnding(lineEnding);
-            newTextEditor.setText(fileContents);
-            return newTextEditor.buffer.cachedDiskContents = fileContents;
-        }, 300);
-    };
-    showRevision = function(repo, filePath, editor, gitRevision, fileContents, options = {}) {
-        var outputFilePath, ref, tempContent;
-        gitRevision = path.basename(gitRevision);
-        outputFilePath = `${repo.getPath()}/{${gitRevision}} ${path.basename(filePath)}`;
-        if (options.diff) outputFilePath += ".diff";
-        tempContent = "Loading..." + ((ref = editor.buffer) != null ? ref.lineEndingForRow(0) : void 0);
-        return fs.writeFile(outputFilePath, tempContent, (error)=>{
-            if (!error) return atom.workspace.open(filePath, {
-                split: "left"
-            }).then((editor)=>{
-                return atom.workspace.open(outputFilePath, {
-                    split: "right"
-                }).then((newTextEditor)=>{
-                    updateNewTextEditor(newTextEditor, editor, gitRevision, fileContents);
-                    try {
-                        return disposables.add(newTextEditor.onDidDestroy(function() {
-                            return fs.unlink(outputFilePath);
-                        }));
-                    } catch (error1) {
-                        error = error1;
-                        return atom.notifications.addError(`Could not remove file ${outputFilePath}`);
-                    }
-                });
-            });
-        });
-    };
-    module.exports = {
-        showRevision: function(repo, editor, gitRevision) {
-            var args, fileName, filePath, options;
-            options = {
-                diff: false
-            };
-            filePath = editor.getPath();
-            fileName = path.basename(filePath);
-            args = [
-                "show",
-                `${gitRevision}:./${fileName}`
-            ];
-            return git.cmd(args, {
-                cwd: path.dirname(filePath)
-            }).then(function(data) {
-                return showRevision(repo, filePath, editor, gitRevision, data, options);
-            }).catch(function(code) {
-                return atom.notifications.addError(`Git Plus: Could not retrieve revision for ${fileName} (${code})`);
-            });
-        }
-    };
-}).call(module.exports);
-
-});
-
 
 parcelRegister("3Pi7d", function(module, exports) {
 
@@ -3846,6 +3735,86 @@ parcelRegister("6nXTe", function(module, exports) {
                     }
                 });
             }
+        }
+    };
+}).call(module.exports);
+
+});
+
+parcelRegister("eZTKA", function(module, exports) {
+
+
+
+
+
+
+
+(function() {
+    var $, BufferedProcess, CompositeDisposable, SyncScroll, _, disposables, fs, git, notifier, path, showRevision, updateNewTextEditor;
+    _ = $dp3SY$underscoreplus;
+    path = $dp3SY$path;
+    fs = $dp3SY$fs;
+    git = (parcelRequire("lppKC"));
+    notifier = (parcelRequire("gSFWX"));
+    ({ CompositeDisposable: CompositeDisposable, BufferedProcess: BufferedProcess } = $dp3SY$atom);
+    ({ $: $ } = $dp3SY$atomspacepenviews);
+    disposables = new CompositeDisposable();
+    SyncScroll = null;
+    updateNewTextEditor = function(newTextEditor, editor, gitRevision, fileContents) {
+        return _.delay(function() {
+            var lineEnding, ref;
+            lineEnding = ((ref = editor.buffer) != null ? ref.lineEndingForRow(0) : void 0) || "\n";
+            fileContents = fileContents.replace(/(\r\n|\n)/g, lineEnding);
+            newTextEditor.buffer.setPreferredLineEnding(lineEnding);
+            newTextEditor.setText(fileContents);
+            return newTextEditor.buffer.cachedDiskContents = fileContents;
+        }, 300);
+    };
+    showRevision = function(repo, filePath, editor, gitRevision, fileContents, options = {}) {
+        var outputFilePath, ref, tempContent;
+        gitRevision = path.basename(gitRevision);
+        outputFilePath = `${repo.getPath()}/{${gitRevision}} ${path.basename(filePath)}`;
+        if (options.diff) outputFilePath += ".diff";
+        tempContent = "Loading..." + ((ref = editor.buffer) != null ? ref.lineEndingForRow(0) : void 0);
+        return fs.writeFile(outputFilePath, tempContent, (error)=>{
+            if (!error) return atom.workspace.open(filePath, {
+                split: "left"
+            }).then((editor)=>{
+                return atom.workspace.open(outputFilePath, {
+                    split: "right"
+                }).then((newTextEditor)=>{
+                    updateNewTextEditor(newTextEditor, editor, gitRevision, fileContents);
+                    try {
+                        return disposables.add(newTextEditor.onDidDestroy(function() {
+                            return fs.unlink(outputFilePath);
+                        }));
+                    } catch (error1) {
+                        error = error1;
+                        return atom.notifications.addError(`Could not remove file ${outputFilePath}`);
+                    }
+                });
+            });
+        });
+    };
+    module.exports = {
+        showRevision: function(repo, editor, gitRevision) {
+            var args, fileName, filePath, options;
+            options = {
+                diff: false
+            };
+            filePath = editor.getPath();
+            fileName = path.basename(filePath);
+            args = [
+                "show",
+                `${gitRevision}:./${fileName}`
+            ];
+            return git.cmd(args, {
+                cwd: path.dirname(filePath)
+            }).then(function(data) {
+                return showRevision(repo, filePath, editor, gitRevision, data, options);
+            }).catch(function(code) {
+                return atom.notifications.addError(`Git Plus: Could not retrieve revision for ${fileName} (${code})`);
+            });
         }
     };
 }).call(module.exports);

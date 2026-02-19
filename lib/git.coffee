@@ -107,6 +107,23 @@ module.exports = git =
       else
         _prettify(data, staged: false)
 
+  getStagingStatus: (repo, filePath) ->
+    git.getRepo()
+      .then (repo) ->
+        git.stagedFiles(repo)
+          .then (stagedFiles) ->
+            git.unstagedFiles(repo, {showUntracked: true})
+              .then (unstagedFiles) ->
+                staged = stagedFiles.some (file) -> file.path is filePath
+                unstaged = unstagedFiles.some (file) -> file.path is filePath
+
+                if staged
+                  return "staged"
+                else if unstaged
+                  return "unstaged"
+                else
+                  return ""
+
   add: (repo, {file, update}={}) ->
     args = ['add']
     if update then args.push '--update' else args.push '--all'
