@@ -1,50 +1,15 @@
-Os = require 'os'
-Path = require 'path'
-fs = require 'fs-plus'
-
 {CompositeDisposable} = require 'atom'
 {TextEditorView, View} = require 'atom-space-pen-views'
-
-git = require '../git'
-
-showCommitFilePath = (objectHash) ->
-  Path.join Os.tmpdir(), "#{objectHash}.diff"
 
 isEmpty = (string) -> string is ''
 
 showObject = (repo, objectHash, file) ->
   objectHash = if isEmpty objectHash then 'HEAD' else objectHash
-  args = ['show', '--color=never']
-  showFormatOption = atom.config.get 'pulsar-git-plus.general.showFormat'
-  args.push "--format=#{showFormatOption}" if showFormatOption != 'none'
-  args.push '--word-diff' if atom.config.get 'pulsar-git-plus.diffs.wordDiff'
-  args.push objectHash
-  args.push '--', file if file?
 
-  git.cmd(args, cwd: repo.getWorkingDirectory())
-  .then (data) -> prepFile(data, objectHash) if data.length > 0
-
-prepFile = (text, objectHash) ->
-  fs.writeFile showCommitFilePath(objectHash), text, flag: 'w+', (err) ->
-    if err then notifier.addError err else showFile objectHash
-
-showFile = (objectHash) ->
-  filePath = showCommitFilePath(objectHash)
-  disposables = new CompositeDisposable
-  editorForDiffs = atom.workspace.getPaneItems().filter((item) -> item.getURI?()?.includes('.diff'))[0]
-  if editorForDiffs?
-    editorForDiffs.setText fs.readFileSync(filePath, encoding: 'utf-8')
-  else
-    if atom.config.get('pulsar-git-plus.general.openInPane')
-      splitDirection = atom.config.get('pulsar-git-plus.general.splitPane')
-      atom.workspace.getCenter().getActivePane()["split#{splitDirection}"]()
-    atom.workspace
-      .open(filePath, pending: true, activatePane: true)
-      .then (textBuffer) ->
-        if textBuffer?
-          disposables.add textBuffer.onDidDestroy ->
-            disposables.dispose()
-            try fs.unlinkSync filePath
+  # TODO: file only changes
+  atom.workspace.open(
+    "atom-github://commit-detail?workdir=#{encodeURIComponent(repo.getWorkingDirectory())}&sha=#{encodeURIComponent(objectHash)}"
+  )
 
 class InputView extends View
   @content: ->

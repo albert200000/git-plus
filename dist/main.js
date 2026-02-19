@@ -4402,78 +4402,17 @@ parcelRegister("65hbE", function(module, exports) {
 parcelRegister("271rL", function(module, exports) {
 
 
-
-
-
-
 (function() {
-    var CompositeDisposable, InputView, Os, Path, TextEditorView, View, fs, git, isEmpty, prepFile, showCommitFilePath, showFile, showObject;
-    Os = $dp3SY$os;
-    Path = $dp3SY$path;
-    fs = $dp3SY$fsplus;
+    var CompositeDisposable, InputView, TextEditorView, View, isEmpty, showObject;
     ({ CompositeDisposable: CompositeDisposable } = $dp3SY$atom);
     ({ TextEditorView: TextEditorView, View: View } = $dp3SY$atomspacepenviews);
-    git = (parcelRequire("lppKC"));
-    showCommitFilePath = function(objectHash) {
-        return Path.join(Os.tmpdir(), `${objectHash}.diff`);
-    };
     isEmpty = function(string) {
         return string === '';
     };
     showObject = function(repo, objectHash, file) {
-        var args, showFormatOption;
         objectHash = isEmpty(objectHash) ? 'HEAD' : objectHash;
-        args = [
-            'show',
-            '--color=never'
-        ];
-        showFormatOption = atom.config.get('pulsar-git-plus.general.showFormat');
-        if (showFormatOption !== 'none') args.push(`--format=${showFormatOption}`);
-        if (atom.config.get('pulsar-git-plus.diffs.wordDiff')) args.push('--word-diff');
-        args.push(objectHash);
-        if (file != null) args.push('--', file);
-        return git.cmd(args, {
-            cwd: repo.getWorkingDirectory()
-        }).then(function(data) {
-            if (data.length > 0) return prepFile(data, objectHash);
-        });
-    };
-    prepFile = function(text, objectHash) {
-        return fs.writeFile(showCommitFilePath(objectHash), text, {
-            flag: 'w+'
-        }, function(err) {
-            if (err) return notifier.addError(err);
-            else return showFile(objectHash);
-        });
-    };
-    showFile = function(objectHash) {
-        var disposables, editorForDiffs, filePath, splitDirection;
-        filePath = showCommitFilePath(objectHash);
-        disposables = new CompositeDisposable();
-        editorForDiffs = atom.workspace.getPaneItems().filter(function(item) {
-            var ref;
-            return typeof item.getURI === "function" ? (ref = item.getURI()) != null ? ref.includes('.diff') : void 0 : void 0;
-        })[0];
-        if (editorForDiffs != null) return editorForDiffs.setText(fs.readFileSync(filePath, {
-            encoding: 'utf-8'
-        }));
-        else {
-            if (atom.config.get('pulsar-git-plus.general.openInPane')) {
-                splitDirection = atom.config.get('pulsar-git-plus.general.splitPane');
-                atom.workspace.getCenter().getActivePane()[`split${splitDirection}`]();
-            }
-            return atom.workspace.open(filePath, {
-                pending: true,
-                activatePane: true
-            }).then(function(textBuffer) {
-                if (textBuffer != null) return disposables.add(textBuffer.onDidDestroy(function() {
-                    disposables.dispose();
-                    try {
-                        return fs.unlinkSync(filePath);
-                    } catch (error) {}
-                }));
-            });
-        }
+        // TODO: file only changes
+        return atom.workspace.open(`atom-github://commit-detail?workdir=${encodeURIComponent(repo.getWorkingDirectory())}&sha=${encodeURIComponent(objectHash)}`);
     };
     InputView = class InputView extends View {
         static content() {
