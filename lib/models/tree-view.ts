@@ -5,7 +5,6 @@ import GitCheckoutFile = require("./git-checkout-file");
 import GitCommit = require("./git-commit");
 import GitDiff = require("./git-diff");
 import GitDiffAll = require("./git-diff-all");
-import GitDiffBranchFiles = require("./git-diff-branch-files");
 import GitDiffBranches = require("./git-diff-branches");
 import GitDiffTool = require("./git-difftool");
 import GitPull = require("./git-pull");
@@ -82,15 +81,6 @@ export async function checkoutFile(treeView: Services.TreeView) {
       }
     });
   });
-}
-
-export async function diffFileAgainstBranch(treeView: Services.TreeView) {
-  const [path] = treeView.selectedPaths();
-  const repo = await Repository.getForPath(path);
-
-  if (!repo) return atom.notifications.addWarning(`No repository found for \`${path}\``);
-
-  GitDiffBranchFiles(repo.repo, path);
 }
 
 export async function diffBranches(treeView: Services.TreeView) {

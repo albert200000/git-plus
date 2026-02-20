@@ -34,10 +34,6 @@
           'command': 'pulsar-git-plus:diff-branches'
         },
         {
-          'label': 'Diff Branch Files'
-          'command': 'pulsar-git-plus:diff-branch-files'
-        },
-        {
           'label': 'Difftool'
           'command': 'pulsar-git-plus:difftool'
         },

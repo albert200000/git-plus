@@ -1316,12 +1316,11 @@ parcelRegister("3iQun", function(module, exports) {
 
 
 
-
 (function() {
     var getCommands, git;
     git = (parcelRequire("lppKC"));
     getCommands = function() {
-        var GitCheckoutBranch, GitCheckoutNewBranch, GitCherryPick, GitCommit, GitCommitAmend, GitDeleteBranch, GitDiff, GitDiffAll, GitDiffBranchFiles, GitDiffBranches, GitDifftool, GitInit, GitLog, GitMerge, GitOpenChangedFiles, GitRebase, GitRemove, GitRun, GitShow, GitStageFiles, GitStageHunk, GitStashApply, GitStashDrop, GitStashPop, GitStashSave, GitStashSaveMessage, GitStatus, GitTags, ManageStashes, commands, gitAdd, gitAddModified, gitCheckoutFile, gitFetch, gitFetchInAllRepos, gitPull, gitPush, gitReset;
+        var GitCheckoutBranch, GitCheckoutNewBranch, GitCherryPick, GitCommit, GitCommitAmend, GitDeleteBranch, GitDiff, GitDiffAll, GitDiffBranches, GitDifftool, GitInit, GitLog, GitMerge, GitOpenChangedFiles, GitRebase, GitRemove, GitRun, GitShow, GitStageFiles, GitStageHunk, GitStashApply, GitStashDrop, GitStashPop, GitStashSave, GitStashSaveMessage, GitStatus, GitTags, ManageStashes, commands, gitAdd, gitAddModified, gitCheckoutFile, gitFetch, gitFetchInAllRepos, gitPull, gitPush, gitReset;
         gitAdd = (parcelRequire("hH1op")).default;
         gitAddModified = (parcelRequire("j90G6")).default;
         GitCheckoutNewBranch = (parcelRequire("4y5U8"));
@@ -1333,7 +1332,6 @@ parcelRegister("3iQun", function(module, exports) {
         GitCommitAmend = (parcelRequire("bXxVi"));
         GitDiff = (parcelRequire("7c2RU"));
         GitDiffBranches = (parcelRequire("3Pi7d"));
-        GitDiffBranchFiles = (parcelRequire("hD9Pz"));
         GitDifftool = (parcelRequire("ejfzQ"));
         GitDiffAll = (parcelRequire("ggLle"));
         gitFetch = (parcelRequire("jd638")).default;
@@ -1562,22 +1560,13 @@ parcelRegister("3iQun", function(module, exports) {
                     });
                 }
             ]);
-            if (atom.config.get('pulsar-git-plus.experimental.diffBranches')) {
-                commands.push([
-                    'pulsar-git-plus:diff-branches',
-                    'Diff branches',
-                    function() {
-                        return GitDiffBranches(repo);
-                    }
-                ]);
-                commands.push([
-                    'pulsar-git-plus:diff-branch-files',
-                    'Diff branch files',
-                    function() {
-                        return GitDiffBranchFiles(repo);
-                    }
-                ]);
-            }
+            commands.push([
+                'pulsar-git-plus:diff-branches',
+                'Diff branches',
+                function() {
+                    return GitDiffBranches(repo);
+                }
+            ]);
             commands.push([
                 'pulsar-git-plus:difftool',
                 'Difftool',
@@ -3496,333 +3485,6 @@ parcelRegister("3Pi7d", function(module, exports) {
 
 });
 
-parcelRegister("hD9Pz", function(module, exports) {
-
-
-
-
-(function() {
-    var BranchListView, DiffBranchFilesView, git, notifier;
-    git = (parcelRequire("lppKC"));
-    notifier = (parcelRequire("gSFWX"));
-    BranchListView = (parcelRequire("baLSq"));
-    DiffBranchFilesView = (parcelRequire("hG3X1"));
-    module.exports = function(repo, filePath) {
-        return git.cmd([
-            'branch',
-            '--no-color'
-        ], {
-            cwd: repo.getWorkingDirectory()
-        }).then(function(branches) {
-            return new BranchListView(branches, function({ name: name }) {
-                var args, branchName;
-                branchName = name;
-                args = [
-                    'diff',
-                    '--name-status',
-                    repo.branch,
-                    branchName
-                ];
-                return git.cmd(args, {
-                    cwd: repo.getWorkingDirectory()
-                }).then(function(diffData) {
-                    return new DiffBranchFilesView(repo, diffData, branchName, filePath);
-                }).catch(notifier.addError);
-            });
-        });
-    };
-}).call(module.exports);
-
-});
-parcelRegister("hG3X1", function(module, exports) {
-
-
-
-
-
-
-
-
-
-(function() {
-    var $$, CompositeDisposable, DiffBranchFilesListView, GitDiff, Path, RevisionView, SelectListView, StatusListView, disposables, fs, git, notifier, prepFile, showFile;
-    ({ $$: $$, SelectListView: SelectListView } = $dp3SY$atomspacepenviews);
-    ({ CompositeDisposable: CompositeDisposable } = $dp3SY$atom);
-    fs = $dp3SY$fsplus;
-    git = (parcelRequire("lppKC"));
-    notifier = (parcelRequire("gSFWX"));
-    StatusListView = (parcelRequire("6nXTe"));
-    GitDiff = (parcelRequire("7c2RU"));
-    Path = $dp3SY$path;
-    RevisionView = (parcelRequire("eZTKA"));
-    disposables = new CompositeDisposable();
-    showFile = function(filePath) {
-        var splitDirection;
-        if (atom.config.get('pulsar-git-plus.general.openInPane')) {
-            splitDirection = atom.config.get('pulsar-git-plus.general.splitPane');
-            atom.workspace.getCenter().getActivePane()[`split${splitDirection}`]();
-        }
-        return atom.workspace.open(filePath);
-    };
-    prepFile = function(text, filePath) {
-        return new Promise(function(resolve, reject) {
-            if ((text != null ? text.length : void 0) === 0) return reject(nothingToShow);
-            else return fs.writeFile(filePath, text, {
-                flag: 'w+'
-            }, function(err) {
-                if (err) return reject(err);
-                else return resolve(true);
-            });
-        });
-    };
-    module.exports = DiffBranchFilesListView = class DiffBranchFilesListView extends StatusListView {
-        initialize(repo, data, branchName, selectedFilePath) {
-            this.repo = repo;
-            this.data = data;
-            this.branchName = branchName;
-            super.initialize();
-            this.setItems(this.parseData(this.data));
-            if (this.items.length === 0) {
-                notifier.addInfo(`The branch '${this.branchName}' has no differences`);
-                return this.cancel();
-            }
-            if (selectedFilePath) this.confirmed({
-                path: this.repo.relativize(selectedFilePath)
-            });
-            this.show();
-            return this.focusFilterEditor();
-        }
-        parseData(files) {
-            var files_list, i, len, line, results, trim_files_string;
-            trim_files_string = this.data.replace(/^\n+|\n+$/g, "");
-            files_list = trim_files_string.split("\n");
-            results = [];
-            for(i = 0, len = files_list.length; i < len; i++){
-                line = files_list[i];
-                if (/^([ MADRCU?!]{1})\s+(.*)/.test(line)) {
-                    if (line !== "") {
-                        line = line.match(/^([ MADRCU?!]{1})\s+(.*)/);
-                        results.push({
-                            type: line[1],
-                            path: line[2]
-                        });
-                    } else results.push(void 0);
-                }
-            }
-            return results;
-        }
-        confirmed({ type: type, path: path }) {
-            var fullPath, promise;
-            this.cancel();
-            fullPath = Path.join(this.repo.getWorkingDirectory(), path);
-            promise = atom.workspace.open(fullPath, {
-                split: "left",
-                activatePane: false,
-                activateItem: true,
-                searchAllPanes: false
-            });
-            return promise.then((editor)=>{
-                return RevisionView.showRevision(this.repo, editor, this.branchName);
-            });
-        }
-    };
-}).call(module.exports);
-
-});
-parcelRegister("6nXTe", function(module, exports) {
-
-
-
-
-
-
-(function() {
-    var $$, GitDiff, Path, SelectListView, StatusListView, fs, git, notifier;
-    ({ $$: $$, SelectListView: SelectListView } = $dp3SY$atomspacepenviews);
-    fs = $dp3SY$fsplus;
-    Path = $dp3SY$path;
-    git = (parcelRequire("lppKC"));
-    GitDiff = (parcelRequire("7c2RU"));
-    notifier = (parcelRequire("gSFWX"));
-    module.exports = StatusListView = class StatusListView extends SelectListView {
-        initialize(repo, data) {
-            this.repo = repo;
-            this.data = data;
-            super.initialize();
-            this.show();
-            this.setItems(this.parseData(this.data));
-            return this.focusFilterEditor();
-        }
-        parseData(files) {
-            var i, len, line, results;
-            results = [];
-            for(i = 0, len = files.length; i < len; i++){
-                line = files[i];
-                if (!/^([ MADRCU?!]{2})\s{1}(.*)/.test(line)) continue;
-                line = line.match(/^([ MADRCU?!]{2})\s{1}(.*)/);
-                results.push({
-                    type: line[1],
-                    path: line[2]
-                });
-            }
-            return results;
-        }
-        getFilterKey() {
-            return 'path';
-        }
-        getEmptyMessage() {
-            return "Nothing to commit, working directory clean.";
-        }
-        show() {
-            if (this.panel == null) this.panel = atom.workspace.addModalPanel({
-                item: this
-            });
-            this.panel.show();
-            return this.storeFocusedElement();
-        }
-        cancelled() {
-            return this.hide();
-        }
-        hide() {
-            var ref;
-            return (ref = this.panel) != null ? ref.destroy() : void 0;
-        }
-        viewForItem({ type: type, path: path }) {
-            var getIcon;
-            getIcon = function(s) {
-                if (s[0] === 'A') return 'status-added icon icon-diff-added';
-                if (s[0] === 'D') return 'status-removed icon icon-diff-removed';
-                if (s[0] === 'R') return 'status-renamed icon icon-diff-renamed';
-                if (s[0] === 'M' || s[1] === 'M') return 'status-modified icon icon-diff-modified';
-                return '';
-            };
-            return $$(function() {
-                return this.li(()=>{
-                    this.div({
-                        class: 'pull-right highlight',
-                        style: 'white-space: pre-wrap; font-family: monospace'
-                    }, type);
-                    this.span({
-                        class: getIcon(type)
-                    });
-                    return this.span(path);
-                });
-            });
-        }
-        confirmed({ type: type, path: path }) {
-            var fullPath, openFile;
-            this.cancel();
-            if (type === '??') return git.add(this.repo, {
-                file: path
-            });
-            else {
-                openFile = confirm(`Open ${path}?`);
-                fullPath = Path.join(this.repo.getWorkingDirectory(), path);
-                return fs.stat(fullPath, (err, stat)=>{
-                    var isDirectory;
-                    if (err) return notifier.addError(err.message);
-                    else {
-                        isDirectory = stat != null ? stat.isDirectory() : void 0;
-                        if (openFile) {
-                            if (isDirectory) return atom.open({
-                                pathsToOpen: fullPath,
-                                newWindow: true
-                            });
-                            else return atom.workspace.open(fullPath);
-                        } else return GitDiff(this.repo, {
-                            file: path
-                        });
-                    }
-                });
-            }
-        }
-    };
-}).call(module.exports);
-
-});
-
-parcelRegister("eZTKA", function(module, exports) {
-
-
-
-
-
-
-
-(function() {
-    var $, BufferedProcess, CompositeDisposable, SyncScroll, _, disposables, fs, git, notifier, path, showRevision, updateNewTextEditor;
-    _ = $dp3SY$underscoreplus;
-    path = $dp3SY$path;
-    fs = $dp3SY$fs;
-    git = (parcelRequire("lppKC"));
-    notifier = (parcelRequire("gSFWX"));
-    ({ CompositeDisposable: CompositeDisposable, BufferedProcess: BufferedProcess } = $dp3SY$atom);
-    ({ $: $ } = $dp3SY$atomspacepenviews);
-    disposables = new CompositeDisposable();
-    SyncScroll = null;
-    updateNewTextEditor = function(newTextEditor, editor, gitRevision, fileContents) {
-        return _.delay(function() {
-            var lineEnding, ref;
-            lineEnding = ((ref = editor.buffer) != null ? ref.lineEndingForRow(0) : void 0) || "\n";
-            fileContents = fileContents.replace(/(\r\n|\n)/g, lineEnding);
-            newTextEditor.buffer.setPreferredLineEnding(lineEnding);
-            newTextEditor.setText(fileContents);
-            return newTextEditor.buffer.cachedDiskContents = fileContents;
-        }, 300);
-    };
-    showRevision = function(repo, filePath, editor, gitRevision, fileContents, options = {}) {
-        var outputFilePath, ref, tempContent;
-        gitRevision = path.basename(gitRevision);
-        outputFilePath = `${repo.getPath()}/{${gitRevision}} ${path.basename(filePath)}`;
-        if (options.diff) outputFilePath += ".diff";
-        tempContent = "Loading..." + ((ref = editor.buffer) != null ? ref.lineEndingForRow(0) : void 0);
-        return fs.writeFile(outputFilePath, tempContent, (error)=>{
-            if (!error) return atom.workspace.open(filePath, {
-                split: "left"
-            }).then((editor)=>{
-                return atom.workspace.open(outputFilePath, {
-                    split: "right"
-                }).then((newTextEditor)=>{
-                    updateNewTextEditor(newTextEditor, editor, gitRevision, fileContents);
-                    try {
-                        return disposables.add(newTextEditor.onDidDestroy(function() {
-                            return fs.unlink(outputFilePath);
-                        }));
-                    } catch (error1) {
-                        error = error1;
-                        return atom.notifications.addError(`Could not remove file ${outputFilePath}`);
-                    }
-                });
-            });
-        });
-    };
-    module.exports = {
-        showRevision: function(repo, editor, gitRevision) {
-            var args, fileName, filePath, options;
-            options = {
-                diff: false
-            };
-            filePath = editor.getPath();
-            fileName = path.basename(filePath);
-            args = [
-                "show",
-                `${gitRevision}:./${fileName}`
-            ];
-            return git.cmd(args, {
-                cwd: path.dirname(filePath)
-            }).then(function(data) {
-                return showRevision(repo, filePath, editor, gitRevision, data, options);
-            }).catch(function(code) {
-                return atom.notifications.addError(`Git Plus: Could not retrieve revision for ${fileName} (${code})`);
-            });
-        }
-    };
-}).call(module.exports);
-
-});
-
-
-
 parcelRegister("ejfzQ", function(module, exports) {
 
 
@@ -5478,6 +5140,118 @@ parcelRegister("9xGRG", function(module, exports) {
 }).call(module.exports);
 
 });
+parcelRegister("6nXTe", function(module, exports) {
+
+
+
+
+
+
+(function() {
+    var $$, GitDiff, Path, SelectListView, StatusListView, fs, git, notifier;
+    ({ $$: $$, SelectListView: SelectListView } = $dp3SY$atomspacepenviews);
+    fs = $dp3SY$fsplus;
+    Path = $dp3SY$path;
+    git = (parcelRequire("lppKC"));
+    GitDiff = (parcelRequire("7c2RU"));
+    notifier = (parcelRequire("gSFWX"));
+    module.exports = StatusListView = class StatusListView extends SelectListView {
+        initialize(repo, data) {
+            this.repo = repo;
+            this.data = data;
+            super.initialize();
+            this.show();
+            this.setItems(this.parseData(this.data));
+            return this.focusFilterEditor();
+        }
+        parseData(files) {
+            var i, len, line, results;
+            results = [];
+            for(i = 0, len = files.length; i < len; i++){
+                line = files[i];
+                if (!/^([ MADRCU?!]{2})\s{1}(.*)/.test(line)) continue;
+                line = line.match(/^([ MADRCU?!]{2})\s{1}(.*)/);
+                results.push({
+                    type: line[1],
+                    path: line[2]
+                });
+            }
+            return results;
+        }
+        getFilterKey() {
+            return 'path';
+        }
+        getEmptyMessage() {
+            return "Nothing to commit, working directory clean.";
+        }
+        show() {
+            if (this.panel == null) this.panel = atom.workspace.addModalPanel({
+                item: this
+            });
+            this.panel.show();
+            return this.storeFocusedElement();
+        }
+        cancelled() {
+            return this.hide();
+        }
+        hide() {
+            var ref;
+            return (ref = this.panel) != null ? ref.destroy() : void 0;
+        }
+        viewForItem({ type: type, path: path }) {
+            var getIcon;
+            getIcon = function(s) {
+                if (s[0] === 'A') return 'status-added icon icon-diff-added';
+                if (s[0] === 'D') return 'status-removed icon icon-diff-removed';
+                if (s[0] === 'R') return 'status-renamed icon icon-diff-renamed';
+                if (s[0] === 'M' || s[1] === 'M') return 'status-modified icon icon-diff-modified';
+                return '';
+            };
+            return $$(function() {
+                return this.li(()=>{
+                    this.div({
+                        class: 'pull-right highlight',
+                        style: 'white-space: pre-wrap; font-family: monospace'
+                    }, type);
+                    this.span({
+                        class: getIcon(type)
+                    });
+                    return this.span(path);
+                });
+            });
+        }
+        confirmed({ type: type, path: path }) {
+            var fullPath, openFile;
+            this.cancel();
+            if (type === '??') return git.add(this.repo, {
+                file: path
+            });
+            else {
+                openFile = confirm(`Open ${path}?`);
+                fullPath = Path.join(this.repo.getWorkingDirectory(), path);
+                return fs.stat(fullPath, (err, stat)=>{
+                    var isDirectory;
+                    if (err) return notifier.addError(err.message);
+                    else {
+                        isDirectory = stat != null ? stat.isDirectory() : void 0;
+                        if (openFile) {
+                            if (isDirectory) return atom.open({
+                                pathsToOpen: fullPath,
+                                newWindow: true
+                            });
+                            else return atom.workspace.open(fullPath);
+                        } else return GitDiff(this.repo, {
+                            file: path
+                        });
+                    }
+                });
+            }
+        }
+    };
+}).call(module.exports);
+
+});
+
 
 parcelRegister("8niyI", function(module, exports) {
 
@@ -6436,15 +6210,8 @@ var $2f43d6d148a5e6a3$exports = {};
                     default: false,
                     description: "Declared custom commands in your `init` file that can be run from the Git-plus command palette"
                 },
-                diffBranches: {
-                    order: 2,
-                    title: "Show diffs across branches",
-                    type: "boolean",
-                    default: false,
-                    description: "Diffs will be shown for the current branch against a branch you choose. The `Diff branch files` command will allow choosing which file to compare. The file feature requires the 'split-diff' package to be installed."
-                },
                 autoFetch: {
-                    order: 3,
+                    order: 2,
                     title: "Auto-fetch",
                     type: "integer",
                     default: 0,
@@ -6452,7 +6219,7 @@ var $2f43d6d148a5e6a3$exports = {};
                     description: "Automatically fetch remote repositories every `x` minutes (`0` will disable this feature)"
                 },
                 autoFetchNotify: {
-                    order: 4,
+                    order: 3,
                     title: "Auto-fetch notification",
                     type: "boolean",
                     default: false,
@@ -6465,7 +6232,6 @@ var $2f43d6d148a5e6a3$exports = {};
 
 
 // const fileSelector = ".tree-view > .full-menu .file";
-const $7381b32e88b1de32$var$notMultiSelectedFileSelector = ".tree-view > .full-menu:not(.multi-select) .file";
 const $7381b32e88b1de32$var$notMultiSelectedSelector = ".tree-view-root:not(.multi-select)";
 const $7381b32e88b1de32$var$multiSelectedSelector = ".tree-view-root.multi-select";
 const $7381b32e88b1de32$var$projectRootSelector = ".header.list-item.project-root-header"; // unfortunately, there's no indicator on the .list-item of whether it's a git repo
@@ -6518,24 +6284,6 @@ function $7381b32e88b1de32$export$e47526f762851abc() {
                     {
                         label: "Diff",
                         command: "pulsar-git-plus-context:diff"
-                    }
-                ]
-            },
-            {
-                type: "separator"
-            }
-        ],
-        // all files
-        [$7381b32e88b1de32$var$notMultiSelectedFileSelector]: [
-            {
-                type: "separator"
-            },
-            {
-                label: "Git",
-                submenu: [
-                    {
-                        label: "Diff Against Branch",
-                        command: "pulsar-git-plus-context:diff-branch-files"
                     }
                 ]
             },
@@ -6802,12 +6550,6 @@ async function $e20c8f3279d546d3$export$b968b96c7285d7cb(treeView) {
         });
     });
 }
-async function $e20c8f3279d546d3$export$f0a89277a59c083d(treeView) {
-    const [path] = treeView.selectedPaths();
-    const repo = await (0, $eQF7Z.default).getForPath(path);
-    if (!repo) return atom.notifications.addWarning(`No repository found for \`${path}\``);
-    GitDiffBranchFiles(repo.repo, path);
-}
 async function $e20c8f3279d546d3$export$39803a6d2aac1a8a(treeView) {
     const [path] = treeView.selectedPaths();
     const repo = await (0, $eQF7Z.default).getForPath(path);
@@ -6924,8 +6666,6 @@ var $bXxVi = parcelRequire("bXxVi");
 var $7c2RU = parcelRequire("7c2RU");
 
 var $3Pi7d = parcelRequire("3Pi7d");
-
-var $hD9Pz = parcelRequire("hD9Pz");
 
 var $ejfzQ = parcelRequire("ejfzQ");
 
@@ -7355,15 +7095,13 @@ module.exports = {
                 "pulsar-git-plus-context:diff": ()=>$e20c8f3279d546d3$export$a37e3c603d7117e5(this.treeView),
                 "pulsar-git-plus-context:diff-all": ()=>$e20c8f3279d546d3$export$a37e3c603d7117e5(this.treeView, true),
                 "pulsar-git-plus-context:diff-branches": ()=>$e20c8f3279d546d3$export$39803a6d2aac1a8a(this.treeView),
-                "pulsar-git-plus-context:diff-branch-files": ()=>$e20c8f3279d546d3$export$f0a89277a59c083d(this.treeView),
                 "pulsar-git-plus-context:difftool": ()=>$e20c8f3279d546d3$export$6eea347271f2f1c2(this.treeView),
                 "pulsar-git-plus-context:pull": ()=>$e20c8f3279d546d3$export$be44f282e480703c(this.treeView),
                 "pulsar-git-plus-context:push": ()=>$e20c8f3279d546d3$export$4cbf152802aa238(this.treeView),
                 "pulsar-git-plus-context:unstage-file": ()=>$e20c8f3279d546d3$export$c854c8b85184a64a(this.treeView)
             }));
-            if (atom.config.get("pulsar-git-plus.experimental.diffBranches")) this.subscriptions.add(atom.commands.add("atom-workspace", {
-                "pulsar-git-plus:diff-branches": ()=>(0, (/*@__PURE__*/$parcel$interopDefault($lppKC))).getRepo().then((repo)=>(0, (/*@__PURE__*/$parcel$interopDefault($3Pi7d)))(repo)),
-                "pulsar-git-plus:diff-branch-files": ()=>(0, (/*@__PURE__*/$parcel$interopDefault($lppKC))).getRepo().then((repo)=>(0, (/*@__PURE__*/$parcel$interopDefault($hD9Pz)))(repo))
+            this.subscriptions.add(atom.commands.add("atom-workspace", {
+                "pulsar-git-plus:diff-branches": ()=>(0, (/*@__PURE__*/$parcel$interopDefault($lppKC))).getRepo().then((repo)=>(0, (/*@__PURE__*/$parcel$interopDefault($3Pi7d)))(repo))
             }));
             this.subscriptions.add(atom.commands.add("atom-workspace", "pulsar-git-plus:stage-files", ()=>(0, (/*@__PURE__*/$parcel$interopDefault($lppKC))).getRepo().then((0, (/*@__PURE__*/$parcel$interopDefault($4BqoQ))))));
             this.subscriptions.add(atom.config.observe("pulsar-git-plus.diffs.syntaxHighlighting", $447ef372badcee69$var$setDiffGrammar), atom.config.observe("pulsar-git-plus.diffs.wordDiff", $447ef372badcee69$var$setDiffGrammar), atom.config.observe("pulsar-git-plus.experimental.autoFetch", (interval)=>this.autoFetch(interval)));

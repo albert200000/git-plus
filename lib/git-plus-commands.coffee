@@ -12,7 +12,6 @@ getCommands = ->
   GitCommitAmend         = require './models/git-commit-amend'
   GitDiff                = require './models/git-diff'
   GitDiffBranches        = require './models/git-diff-branches'
-  GitDiffBranchFiles     = require './models/git-diff-branch-files'
   GitDifftool            = require './models/git-difftool'
   GitDiffAll             = require './models/git-diff-all'
   gitFetch               = require('./models/fetch').default
@@ -71,9 +70,7 @@ getCommands = ->
       commands.push ['pulsar-git-plus:delete-branch-local-and-remote', 'Delete Branch (Local and Remote)', -> GitDeleteBranch(repo).then -> GitDeleteBranch(repo, {remote: true})]
       commands.push ['pulsar-git-plus:cherry-pick', 'Cherry-Pick', -> GitCherryPick(repo)]
       commands.push ['pulsar-git-plus:diff', 'Diff', -> GitDiff(repo, file: currentFile)]
-      if atom.config.get('pulsar-git-plus.experimental.diffBranches')
-        commands.push ['pulsar-git-plus:diff-branches', 'Diff branches', -> GitDiffBranches(repo)]
-        commands.push ['pulsar-git-plus:diff-branch-files', 'Diff branch files', -> GitDiffBranchFiles(repo)]
+      commands.push ['pulsar-git-plus:diff-branches', 'Diff branches', -> GitDiffBranches(repo)]
       commands.push ['pulsar-git-plus:difftool', 'Difftool', -> GitDifftool(repo)]
       commands.push ['pulsar-git-plus:diff-all', 'Diff All', -> GitDiffAll(repo)]
       commands.push ['pulsar-git-plus:fetch', 'Fetch', gitFetch]
